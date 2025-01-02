@@ -25,6 +25,11 @@ segment code
    		MOV     AH,0
     	INT     10h
 		
+
+	; Tela de dificuldade
+	
+
+
 ;escrever uma mensagem
 ; MSN: 
 ; 		MOV 	CX,14						;número de caracteres
@@ -43,6 +48,250 @@ segment code
 ; 		INC		byte[cor]					;mudar a cor para a seguinte
 ;     	LOOP    l4
 
+; 	Tela de dificuldade
+
+
+;Nome do jogo
+		MOV 	CX,9						;número de caracteres
+    	MOV    	BX,0			
+    	MOV    	DH,3						;linha 0-29
+    	MOV     DL,35						;coluna 0-79
+		MOV		byte [cor],verde_claro
+l_nome:
+		CALL	cursor
+		;MOV     DI,DS
+    	MOV     AL,[BX+nome_jogo]
+		
+		CALL	caracter
+    	INC		BX							;proximo caracter
+		INC		DL							;avanca a coluna
+		; INC		byte[cor]					;mudar a cor para a seguinte
+    	LOOP    l_nome
+		
+
+;Seleciona a dificuldade
+
+		MOV 	CX,23						;número de caracteres
+    	MOV    	BX,0			
+    	MOV    	DH,5						;linha 0-29
+    	MOV     DL,30						;coluna 0-79
+		MOV		byte [cor],branco_intenso
+l_dificuldade:
+		CALL	cursor
+		;MOV     DI,DS
+    	MOV     AL,[BX+selecao]
+		
+		CALL	caracter
+    	INC		BX							;proximo caracter
+		INC		DL							;avanca a coluna
+		; INC		byte[cor]					;mudar a cor para a seguinte
+    	LOOP    l_dificuldade
+		
+
+; 	Tela de dificuldade
+
+; 1 BOTAO
+		MOV 	AX, 70
+		PUSH 	AX
+		MOV 	AX, 280
+		PUSH 	AX
+		MOV 	AX, 190
+		PUSH	AX
+		MOV 	AX, 280
+		PUSH 	AX
+		MOV 	byte[cor], branco
+		CALL 	line
+
+		MOV 	AX, 70
+		PUSH 	AX
+		MOV 	AX, 280
+		PUSH 	AX
+		MOV 	AX, 70
+		PUSH	AX
+		MOV 	AX, 200
+		PUSH 	AX
+		MOV 	byte[cor], branco
+		CALL 	line
+
+		MOV 	AX, 70
+		PUSH 	AX
+		MOV 	AX, 200
+		PUSH 	AX
+		MOV 	AX, 190
+		PUSH	AX
+		MOV 	AX, 200
+		PUSH 	AX
+		MOV 	byte[cor], branco
+		CALL 	line
+
+		MOV 	AX, 190
+		PUSH 	AX
+		MOV 	AX, 200
+		PUSH 	AX
+		MOV 	AX, 190
+		PUSH	AX
+		MOV 	AX, 280
+		PUSH 	AX
+		MOV 	byte[cor], branco
+		CALL 	line
+
+; 2 BOTAO
+
+		MOV 	AX, 260
+		PUSH 	AX
+		MOV 	AX, 280
+		PUSH 	AX
+		MOV 	AX, 380
+		PUSH	AX
+		MOV 	AX, 280
+		PUSH 	AX
+		MOV 	byte[cor], branco
+		CALL 	line
+
+		MOV 	AX, 260
+		PUSH 	AX
+		MOV 	AX, 280
+		PUSH 	AX
+		MOV 	AX, 260
+		PUSH	AX
+		MOV 	AX, 200
+		PUSH 	AX
+		MOV 	byte[cor], branco
+		CALL 	line
+
+		MOV 	AX, 260
+		PUSH 	AX
+		MOV 	AX, 200
+		PUSH 	AX
+		MOV 	AX, 380
+		PUSH	AX
+		MOV 	AX, 200
+		PUSH 	AX
+		MOV 	byte[cor], branco
+		CALL 	line
+
+		MOV 	AX, 380
+		PUSH 	AX
+		MOV 	AX, 200
+		PUSH 	AX
+		MOV 	AX, 380
+		PUSH	AX
+		MOV 	AX, 280
+		PUSH 	AX
+		MOV 	byte[cor], branco
+		CALL 	line
+
+; 3 BOTAO
+
+		MOV 	AX, 450
+		PUSH 	AX
+		MOV 	AX, 280
+		PUSH 	AX
+		MOV 	AX, 570
+		PUSH	AX
+		MOV 	AX, 280
+		PUSH 	AX
+		MOV 	byte[cor], branco
+		CALL 	line
+
+		MOV 	AX, 450
+		PUSH 	AX
+		MOV 	AX, 280
+		PUSH 	AX
+		MOV 	AX, 450
+		PUSH	AX
+		MOV 	AX, 200
+		PUSH 	AX
+		MOV 	byte[cor], branco
+		CALL 	line
+
+		MOV 	AX, 450
+		PUSH 	AX
+		MOV 	AX, 200
+		PUSH 	AX
+		MOV 	AX, 570
+		PUSH	AX
+		MOV 	AX, 200
+		PUSH 	AX
+		MOV 	byte[cor], branco
+		CALL 	line
+
+		MOV 	AX, 570
+		PUSH 	AX
+		MOV 	AX, 200
+		PUSH 	AX
+		MOV 	AX, 570
+		PUSH	AX
+		MOV 	AX, 280
+		PUSH 	AX
+		MOV 	byte[cor], branco
+		CALL 	line
+
+	;Facil
+		MOV 	CX,5						;número de caracteres
+    	MOV    	BX,0			
+    	MOV    	DH,15						;linha 0-29
+    	MOV     DL,14						;coluna 0-79
+		MOV		byte [cor],verde
+l_facil:
+		CALL	cursor
+		;MOV     DI,DS
+    	MOV     AL,[BX+facil]
+		
+		CALL	caracter
+    	INC		BX							;proximo caracter
+		INC		DL							;avanca a coluna
+    	LOOP    l_facil
+
+	;Medio
+		MOV 	CX,5						;número de caracteres
+    	MOV    	BX,0			
+    	MOV    	DH,15						;linha 0-29
+    	MOV     DL,38						;coluna 0-79
+		MOV		byte [cor],amarelo
+l_medio:
+		CALL	cursor
+		;MOV     DI,DS
+    	MOV     AL,[BX+medio]
+		
+		CALL	caracter
+    	INC		BX							;proximo caracter
+		INC		DL							;avanca a coluna
+    	LOOP    l_medio
+
+
+	;Dificil
+		MOV 	CX,7						;número de caracteres
+    	MOV    	BX,0			
+    	MOV    	DH,15						;linha 0-29
+    	MOV     DL,60						;coluna 0-79
+		MOV		byte [cor],vermelho
+l_dificil:
+		CALL	cursor
+		;MOV     DI,DS
+    	MOV     AL,[BX+dificil]
+		
+		CALL	caracter
+    	INC		BX							;proximo caracter
+		INC		DL							;avanca a coluna
+    	LOOP    l_dificil
+
+
+; Cursor de selecao
+		MOV 	AX, 70
+		PUSH 	AX
+		MOV 	AX, 180
+		PUSH 	AX
+		MOV 	AX, 190
+		PUSH	AX
+		MOV 	AX, 180
+		PUSH 	AX
+		MOV 	byte[cor], verde_claro
+		CALL 	line
+
+
+
+
 		MOV    	AH,08h
 		INT     21h
 	    MOV  	AH,0   						; set video mode
@@ -51,9 +300,6 @@ segment code
 		MOV     AX,4c00h
 		INT     21h
 
-	
-		
-;*******************************************************************
 
 segment data
 
@@ -98,8 +344,13 @@ modo_anterior	db		0
 linha   	    dw  	0
 coluna  	    dw  	0
 deltax		    dw		0
-deltay		    dw		0	
-mens    	    db  	'Funcao Grafica SE_I $' 
+deltay		    dw		0
+nome_jogo		dw 		'Ping-Pong $'
+selecao    	    db  	'Selecione a dificuldade $' 
+facil           db      'Facil $'
+medio           db      'Medio $'
+dificil         db      'Dificil $'
+dificuldade     db      0
 
 ;*************************************************************************
 segment stack stack
