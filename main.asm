@@ -84,8 +84,27 @@ l_dificuldade:
 		CALL	caracter
     	INC		BX							;proximo caracter
 		INC		DL							;avanca a coluna
-		; INC		byte[cor]					;mudar a cor para a seguinte
+		; INC		byte[cor]				;mudar a cor para a seguinte
     	LOOP    l_dificuldade
+		
+
+;Desenvolvido por:
+
+		MOV 	CX,39						;número de caracteres
+    	MOV    	BX,0			
+    	MOV    	DH,29						;linha 0-29
+    	MOV     DL,0						;coluna 0-79
+		MOV		byte [cor],branco_intenso
+l_desenvolvido:
+		CALL	cursor
+		;MOV     DI,DS
+    	MOV     AL,[BX+desenvolvido]
+		
+		CALL	caracter
+    	INC		BX							;proximo caracter
+		INC		DL							;avanca a coluna
+		; INC		byte[cor]				;mudar a cor para a seguinte
+    	LOOP    l_desenvolvido
 		
 
 ; 	Tela de dificuldade
@@ -99,7 +118,7 @@ l_dificuldade:
 		PUSH	AX
 		MOV 	AX, 280
 		PUSH 	AX
-		MOV 	byte[cor], branco
+		MOV 	byte[cor], verde_claro
 		CALL 	line
 
 		MOV 	AX, 70
@@ -110,7 +129,7 @@ l_dificuldade:
 		PUSH	AX
 		MOV 	AX, 200
 		PUSH 	AX
-		MOV 	byte[cor], branco
+		MOV 	byte[cor], verde_claro
 		CALL 	line
 
 		MOV 	AX, 70
@@ -121,7 +140,7 @@ l_dificuldade:
 		PUSH	AX
 		MOV 	AX, 200
 		PUSH 	AX
-		MOV 	byte[cor], branco
+		MOV 	byte[cor], verde_claro
 		CALL 	line
 
 		MOV 	AX, 190
@@ -132,7 +151,7 @@ l_dificuldade:
 		PUSH	AX
 		MOV 	AX, 280
 		PUSH 	AX
-		MOV 	byte[cor], branco
+		MOV 	byte[cor], verde_claro
 		CALL 	line
 
 ; 2 BOTAO
@@ -232,7 +251,7 @@ l_dificuldade:
     	MOV    	BX,0			
     	MOV    	DH,15						;linha 0-29
     	MOV     DL,14						;coluna 0-79
-		MOV		byte [cor],verde
+		MOV		byte [cor],branco
 l_facil:
 		CALL	cursor
 		;MOV     DI,DS
@@ -346,10 +365,11 @@ coluna  	    dw  	0
 deltax		    dw		0
 deltay		    dw		0
 nome_jogo		dw 		'Ping-Pong $'
-selecao    	    db  	'Selecione a dificuldade $' 
-facil           db      'Facil $'
-medio           db      'Medio $'
-dificil         db      'Dificil $'
+selecao    	    db  	'Selecione a dificuldade $'
+desenvolvido	dw		'Desenvolvido por: esguicho, otoch, tvin $' 
+facil           db      'FACIL $'
+medio           db      'MEDIO $'
+dificil         db      'DIFICIL $'
 dificuldade     db      0
 
 ;*************************************************************************
