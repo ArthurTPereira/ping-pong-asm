@@ -296,7 +296,73 @@ l_dificil:
     	LOOP    l_dificil
 
 
-; Cursor de selecao
+		; Cursor de selecao inicial
+		CALL 	paint_cursor_1_selected
+		MOV 	byte[dificuldade], 0
+
+selection_loop:
+		CALL    check_key
+		CMP     AL, 0
+		JE      selection_loop
+		CALL    handle_key
+		JMP     selection_loop
+
+check_key:
+		MOV    AH, 01h
+		INT    16h
+		JZ     no_key
+		MOV    AH, 00h
+		INT    16h
+		RET
+
+
+no_key:
+		MOV    AL, 0
+		RET
+
+handle_key:
+		CMP    AL, 61h
+		JE     selection_left
+		CMP    AL, 64h
+		JE     selection_right
+
+		CMP    AL, 0Dh
+		JE    selection_enter
+		RET
+
+selection_left:
+		CMP    byte[dificuldade], 0
+		JE     selection_loop
+		
+		DEC    byte[dificuldade]
+		JMP   erase_cursor
+
+selection_right:
+		CMP    byte[dificuldade], 2
+		JE     selection_loop
+		
+		INC    byte[dificuldade]
+		JMP   erase_cursor
+
+selection_enter:
+	    MOV  	AH,0   						; set video mode
+	    MOV  	AL,[modo_anterior]   		; modo anterior
+	    INT  	10h
+		MOV     AX,4c00h
+		INT     21h
+
+
+erase_cursor:
+		CMP    byte[dificuldade], 0
+		JE     paint_cursor_1_selected
+		CMP    byte[dificuldade], 1
+		JE     paint_cursor_2_selected
+		CMP    byte[dificuldade], 2
+		JE     paint_cursor_3_selected
+		JMP    selection_loop
+
+
+paint_cursor_1_selected:
 		MOV 	AX, 70
 		PUSH 	AX
 		MOV 	AX, 180
@@ -307,17 +373,78 @@ l_dificil:
 		PUSH 	AX
 		MOV 	byte[cor], verde_claro
 		CALL 	line
+		CALL 	paint_cursor_2_NOT_selected
+		CALL 	paint_cursor_3_NOT_selected
+		JMP    selection_loop
 
+paint_cursor_2_selected:
+		MOV 	AX, 260
+		PUSH 	AX
+		MOV 	AX, 180
+		PUSH 	AX
+		MOV 	AX, 380
+		PUSH	AX
+		MOV 	AX, 180
+		PUSH 	AX
+		MOV 	byte[cor], verde_claro
+		CALL 	line
+		CALL 	paint_cursor_1_NOT_selected
+		CALL 	paint_cursor_3_NOT_selected
+		JMP    selection_loop
 
+paint_cursor_3_selected:
+		MOV 	AX, 450
+		PUSH 	AX
+		MOV 	AX, 180
+		PUSH 	AX
+		MOV 	AX, 570
+		PUSH	AX
+		MOV 	AX, 180
+		PUSH 	AX
+		MOV 	byte[cor], verde_claro
+		CALL 	line
+		CALL 	paint_cursor_1_NOT_selected
+		CALL 	paint_cursor_2_NOT_selected
+		JMP    selection_loop
 
+paint_cursor_1_NOT_selected:
+		MOV 	AX, 70
+		PUSH 	AX
+		MOV 	AX, 180
+		PUSH 	AX
+		MOV 	AX, 190
+		PUSH	AX
+		MOV 	AX, 180
+		PUSH 	AX
+		MOV 	byte[cor], preto
+		CALL 	line
+		RET
 
-		MOV    	AH,08h
-		INT     21h
-	    MOV  	AH,0   						; set video mode
-	    MOV  	AL,[modo_anterior]   		; modo anterior
-	    INT  	10h
-		MOV     AX,4c00h
-		INT     21h
+paint_cursor_2_NOT_selected:
+		MOV 	AX, 260
+		PUSH 	AX
+		MOV 	AX, 180
+		PUSH 	AX
+		MOV 	AX, 380
+		PUSH	AX
+		MOV 	AX, 180
+		PUSH 	AX
+		MOV 	byte[cor], preto
+		CALL 	line
+		RET
+
+paint_cursor_3_NOT_selected:
+		MOV 	AX, 450
+		PUSH 	AX
+		MOV 	AX, 180
+		PUSH 	AX
+		MOV 	AX, 570
+		PUSH	AX
+		MOV 	AX, 180
+		PUSH 	AX
+		MOV 	byte[cor], preto
+		CALL 	line
+		RET
 
 
 segment data
