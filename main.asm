@@ -2,7 +2,7 @@
 ; Uso de diretivas extern e global 
 ; Professor Camilo Diaz
 
-extern line, full_circle, circle, cursor, caracter, plot_xy 
+extern line, full_circle, circle, cursor, caracter, plot_xy, desenha_botoes
 global cor
 
 segment code
@@ -25,32 +25,6 @@ segment code
    		MOV     AH,0
     	INT     10h
 		
-
-	; Tela de dificuldade
-	
-
-
-;escrever uma mensagem
-; MSN: 
-; 		MOV 	CX,14						;número de caracteres
-;     	MOV    	BX,0			
-;     	MOV    	DH,0						;linha 0-29
-;     	MOV     DL,30						;coluna 0-79
-; 		MOV		byte [cor],azul
-; l4:
-; 		CALL	cursor
-; 		;MOV     DI,DS
-;     	MOV     AL,[BX+mens]
-		
-; 		CALL	caracter
-;     	INC		BX							;proximo caracter
-; 		INC		DL							;avanca a coluna
-; 		INC		byte[cor]					;mudar a cor para a seguinte
-;     	LOOP    l4
-
-; 	Tela de dificuldade
-
-
 ;Nome do jogo
 		MOV 	CX,9						;número de caracteres
     	MOV    	BX,0			
@@ -108,143 +82,8 @@ l_desenvolvido:
 		
 
 ; 	Tela de dificuldade
-
-; 1 BOTAO
-		MOV 	AX, 70
-		PUSH 	AX
-		MOV 	AX, 280
-		PUSH 	AX
-		MOV 	AX, 190
-		PUSH	AX
-		MOV 	AX, 280
-		PUSH 	AX
-		MOV 	byte[cor], verde_claro
-		CALL 	line
-
-		MOV 	AX, 70
-		PUSH 	AX
-		MOV 	AX, 280
-		PUSH 	AX
-		MOV 	AX, 70
-		PUSH	AX
-		MOV 	AX, 200
-		PUSH 	AX
-		MOV 	byte[cor], verde_claro
-		CALL 	line
-
-		MOV 	AX, 70
-		PUSH 	AX
-		MOV 	AX, 200
-		PUSH 	AX
-		MOV 	AX, 190
-		PUSH	AX
-		MOV 	AX, 200
-		PUSH 	AX
-		MOV 	byte[cor], verde_claro
-		CALL 	line
-
-		MOV 	AX, 190
-		PUSH 	AX
-		MOV 	AX, 200
-		PUSH 	AX
-		MOV 	AX, 190
-		PUSH	AX
-		MOV 	AX, 280
-		PUSH 	AX
-		MOV 	byte[cor], verde_claro
-		CALL 	line
-
-; 2 BOTAO
-
-		MOV 	AX, 260
-		PUSH 	AX
-		MOV 	AX, 280
-		PUSH 	AX
-		MOV 	AX, 380
-		PUSH	AX
-		MOV 	AX, 280
-		PUSH 	AX
 		MOV 	byte[cor], branco
-		CALL 	line
-
-		MOV 	AX, 260
-		PUSH 	AX
-		MOV 	AX, 280
-		PUSH 	AX
-		MOV 	AX, 260
-		PUSH	AX
-		MOV 	AX, 200
-		PUSH 	AX
-		MOV 	byte[cor], branco
-		CALL 	line
-
-		MOV 	AX, 260
-		PUSH 	AX
-		MOV 	AX, 200
-		PUSH 	AX
-		MOV 	AX, 380
-		PUSH	AX
-		MOV 	AX, 200
-		PUSH 	AX
-		MOV 	byte[cor], branco
-		CALL 	line
-
-		MOV 	AX, 380
-		PUSH 	AX
-		MOV 	AX, 200
-		PUSH 	AX
-		MOV 	AX, 380
-		PUSH	AX
-		MOV 	AX, 280
-		PUSH 	AX
-		MOV 	byte[cor], branco
-		CALL 	line
-
-; 3 BOTAO
-
-		MOV 	AX, 450
-		PUSH 	AX
-		MOV 	AX, 280
-		PUSH 	AX
-		MOV 	AX, 570
-		PUSH	AX
-		MOV 	AX, 280
-		PUSH 	AX
-		MOV 	byte[cor], branco
-		CALL 	line
-
-		MOV 	AX, 450
-		PUSH 	AX
-		MOV 	AX, 280
-		PUSH 	AX
-		MOV 	AX, 450
-		PUSH	AX
-		MOV 	AX, 200
-		PUSH 	AX
-		MOV 	byte[cor], branco
-		CALL 	line
-
-		MOV 	AX, 450
-		PUSH 	AX
-		MOV 	AX, 200
-		PUSH 	AX
-		MOV 	AX, 570
-		PUSH	AX
-		MOV 	AX, 200
-		PUSH 	AX
-		MOV 	byte[cor], branco
-		CALL 	line
-
-		MOV 	AX, 570
-		PUSH 	AX
-		MOV 	AX, 200
-		PUSH 	AX
-		MOV 	AX, 570
-		PUSH	AX
-		MOV 	AX, 280
-		PUSH 	AX
-		MOV 	byte[cor], branco
-		CALL 	line
+		CALL 	desenha_botoes
 
 	;Facil
 		MOV 	CX,5						;número de caracteres
