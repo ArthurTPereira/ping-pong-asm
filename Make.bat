@@ -6,5 +6,6 @@ call nasm cursor
 call nasm caracter 
 call nasm plot_xy
 call nasm buttons
-call freelink main line fcircle circle cursor caracter plot_xy buttons
+call nasm bloco
+call freelink main line fcircle circle cursor caracter plot_xy buttons bloco
 main.exe

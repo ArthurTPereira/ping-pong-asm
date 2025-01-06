@@ -2,7 +2,7 @@
 ; Uso de diretivas extern e global 
 ; Professor Camilo Diaz
 
-extern line, full_circle, circle, cursor, caracter, plot_xy, desenha_botoes
+extern line, full_circle, circle, cursor, caracter, plot_xy, desenha_botoes, bloco
 global cor
 
 segment code
@@ -187,7 +187,8 @@ selection_right:
 		JMP   erase_cursor
 
 selection_enter:
-		JMP		reset_tela
+		CALL	reset_tela
+		JMP		cria_campo
 	    
 
 selection_quit:
@@ -329,6 +330,145 @@ apaga_desenvolvido:
 
     ret
 
+cria_campo:
+; Limites superiores e inferiores
+	MOV		AX,42
+	PUSH	AX
+	MOV		AX, 5
+	PUSH	AX
+	MOV		AX,598
+	PUSH	AX
+	MOV		AX, 5
+	PUSH	AX
+	MOV 	byte[cor], branco_intenso
+	CALL	line
+
+	MOV		AX,42
+	PUSH	AX
+	MOV		AX, 475
+	PUSH	AX
+	MOV		AX,598
+	PUSH	AX
+	MOV		AX, 475
+	PUSH	AX
+	MOV 	byte[cor], branco_intenso
+	CALL	line
+
+; Blocos dos gols
+
+	MOV 	AX,0
+	PUSH	AX
+	MOV		AX, 5
+	PUSH	AX
+	MOV		AX,20
+	PUSH	AX
+	MOV		AX, 90
+	PUSH	AX
+	MOV 	byte[cor], azul
+	CALL 	bloco
+
+	MOV 	AX,0
+	PUSH	AX
+	MOV		AX, 95
+	PUSH	AX
+	MOV		AX,20
+	PUSH	AX
+	MOV		AX, 185
+	PUSH	AX
+	MOV 	byte[cor], azul_claro
+	CALL 	bloco
+
+	MOV 	AX,0
+	PUSH	AX
+	MOV		AX, 190
+	PUSH	AX
+	MOV		AX,20
+	PUSH	AX
+	MOV		AX, 280
+	PUSH	AX
+	MOV 	byte[cor], verde
+	CALL 	bloco
+
+	MOV 	AX,0
+	PUSH	AX
+	MOV		AX, 285
+	PUSH	AX
+	MOV		AX,20
+	PUSH	AX
+	MOV		AX, 375
+	PUSH	AX
+	MOV 	byte[cor], amarelo
+	CALL 	bloco
+
+	MOV 	AX,0
+	PUSH	AX
+	MOV		AX, 380
+	PUSH	AX
+	MOV		AX,20
+	PUSH	AX
+	MOV		AX, 470
+	PUSH	AX
+	MOV 	byte[cor], vermelho
+	CALL 	bloco
+
+	MOV 	AX,620
+	PUSH	AX
+	MOV		AX, 5
+	PUSH	AX
+	MOV		AX,639
+	PUSH	AX
+	MOV		AX, 90
+	PUSH	AX
+	MOV 	byte[cor], azul
+	CALL 	bloco
+
+	MOV 	AX,620
+	PUSH	AX
+	MOV		AX, 95
+	PUSH	AX
+	MOV		AX,639
+	PUSH	AX
+	MOV		AX, 185
+	PUSH	AX
+	MOV 	byte[cor], azul_claro
+	CALL 	bloco
+
+	MOV 	AX,620
+	PUSH	AX
+	MOV		AX, 190
+	PUSH	AX
+	MOV		AX,639
+	PUSH	AX
+	MOV		AX, 280
+	PUSH	AX
+	MOV 	byte[cor], verde
+	CALL 	bloco
+
+	MOV 	AX,620
+	PUSH	AX
+	MOV		AX, 285
+	PUSH	AX
+	MOV		AX,639
+	PUSH	AX
+	MOV		AX, 375
+	PUSH	AX
+	MOV 	byte[cor], amarelo
+	CALL 	bloco
+
+	MOV 	AX,620
+	PUSH	AX
+	MOV		AX, 380
+	PUSH	AX
+	MOV		AX,639
+	PUSH	AX
+	MOV		AX, 470
+	PUSH	AX
+	MOV 	byte[cor], vermelho
+	CALL 	bloco
+	
+
+
+	JMP selection_loop
 
 
 segment data
