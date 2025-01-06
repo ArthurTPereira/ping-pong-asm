@@ -165,6 +165,9 @@ handle_key:
 		CMP    AL, 64h
 		JE     selection_right
 
+		CMP	   AL, 1Bh
+		JE	   selection_quit
+
 		CMP    AL, 0Dh
 		JE    selection_enter
 		RET
@@ -184,7 +187,11 @@ selection_right:
 		JMP   erase_cursor
 
 selection_enter:
-	    MOV  	AH,0   						; set video mode
+		JMP		reset_tela
+	    
+
+selection_quit:
+		MOV  	AH,0   						; set video mode
 	    MOV  	AL,[modo_anterior]   		; modo anterior
 	    INT  	10h
 		MOV     AX,4c00h
@@ -284,6 +291,44 @@ paint_cursor_3_NOT_selected:
 		MOV 	byte[cor], preto
 		CALL 	line
 		RET
+
+reset_tela:
+    ; Carrega o segmento de vídeo para modo 12h (0xA000)
+    mov     ax, 0A000h
+    mov     es, ax
+    ; DI = 0 (início do segmento de vídeo)
+    xor     di, di
+    ; Precisamos escrever 76.800 words (cada word = 2 bytes = 4 pixels)
+    mov     cx, 76800
+    ; AX = 0 → cor preta em cada word
+    xor     ax, ax
+    ; Preenche (repete) CX vezes o valor de AX (0) em ES:[DI]
+    rep     stosw
+
+	call 	paint_cursor_1_NOT_selected
+	call	paint_cursor_2_NOT_selected
+	call	paint_cursor_3_NOT_selected
+
+	
+	MOV 	CX,39						;número de caracteres
+    MOV    	BX,0			
+    MOV    	DH,29						;linha 0-29
+    MOV     DL,0						;coluna 0-79
+	MOV		byte [cor],preto
+
+apaga_desenvolvido:
+	CALL	cursor
+		;MOV     DI,DS
+    MOV     AL,[BX+desenvolvido]
+		
+	CALL	caracter
+    INC		BX							;proximo caracter
+	INC		DL							;avanca a coluna
+
+    LOOP    apaga_desenvolvido
+
+    ret
+
 
 
 segment data
