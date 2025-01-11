@@ -469,8 +469,8 @@ cria_campo:
 
 
 ; Parametros da bola inicialmente
-	MOV word[deltax], 1
-	MOV word[deltay], 1
+	MOV word[deltax], passo_bola
+	MOV word[deltay], passo_bola
 
 	MOV word[bola_x], 320
 	MOV word[bola_y], 26
@@ -519,19 +519,19 @@ passo1:
 	JMP 	loop_bola
 
 bateu_na_parede_esquerda:
-	MOV 	WORD[deltax], 1
+	MOV 	WORD[deltax], passo_bola
 	JMP 	passo1
 
 bateu_na_parede_direita:
-	MOV 	WORD[deltax], -1
+	MOV 	WORD[deltax], -passo_bola
 	JMP 	passo1
 
 bateu_na_parede_inferior:
-	MOV 	WORD[deltay], 1
+	MOV 	WORD[deltay], passo_bola
 	JMP 	passo1
 
 bateu_na_parede_superior:
-	MOV 	WORD[deltay], -1
+	MOV 	WORD[deltay], -passo_bola
 	JMP 	passo1
 
 
@@ -592,6 +592,7 @@ dificuldade     db      0
 raio            dw      0
 bola_x 		dw      0
 bola_y 		dw      0
+passo_bola EQU 4
 
 ;*************************************************************************
 segment stack stack
