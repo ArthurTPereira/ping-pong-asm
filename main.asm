@@ -468,6 +468,73 @@ cria_campo:
 	
 
 
+; Parametros da bola inicialmente
+	MOV word[deltax], 1
+	MOV word[deltay], 1
+
+	MOV word[bola_x], 320
+	MOV word[bola_y], 26
+	MOV word[raio], 20
+
+loop_bola:
+	; verifica se a bola bateu na parede
+	CMP 	WORD[bola_x], 40
+	JL		bateu_na_parede_esquerda
+	CMP 	WORD[bola_x], 600
+	JG		bateu_na_parede_direita
+	CMP 	WORD[bola_y], 26
+	JL		bateu_na_parede_inferior
+	CMP 	WORD[bola_y], 454
+	JG		bateu_na_parede_superior
+
+passo1:
+	;; apaga a bola
+	MOV 	AX, WORD[bola_x]
+	PUSH	AX
+	MOV		AX, WORD[bola_y]
+	PUSH	AX
+	MOV		AX, WORD[raio]
+	PUSH	AX
+	MOV     byte[cor], preto
+	CALL 	full_circle
+
+	;; atualiza a posição da bola
+	MOV 	AX, WORD[deltax]
+	ADD 	WORD[bola_x], AX
+
+	MOV 	AX, WORD[deltay]
+	ADD 	WORD[bola_y], AX
+
+
+	;; desenha a bola
+	MOV 	AX, WORD[bola_x]
+	PUSH	AX
+	MOV		AX, WORD[bola_y]
+	PUSH	AX
+	MOV		AX, WORD[raio]
+	PUSH	AX
+	MOV     byte[cor], vermelho
+	CALL 	full_circle
+
+	JMP 	loop_bola
+
+bateu_na_parede_esquerda:
+	MOV 	WORD[deltax], 1
+	JMP 	passo1
+
+bateu_na_parede_direita:
+	MOV 	WORD[deltax], -1
+	JMP 	passo1
+
+bateu_na_parede_inferior:
+	MOV 	WORD[deltay], 1
+	JMP 	passo1
+
+bateu_na_parede_superior:
+	MOV 	WORD[deltay], -1
+	JMP 	passo1
+
+
 	JMP selection_loop
 
 
@@ -522,6 +589,9 @@ facil           db      'FACIL $'
 medio           db      'MEDIO $'
 dificil         db      'DIFICIL $'
 dificuldade     db      0
+raio            dw      0
+bola_x 		dw      0
+bola_y 		dw      0
 
 ;*************************************************************************
 segment stack stack
