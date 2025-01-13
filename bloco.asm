@@ -12,8 +12,6 @@ bloco:
     MOV		CX,[bp+6]   ;x2 
     MOV		DX,[bp+4]   ;y2
 
-    
-
     PUSH    AX
     PUSH    BX
     PUSH    AX
@@ -39,7 +37,8 @@ bloco:
     CALL    line
 
     POP     BP
-    RET
+
+    RET 8
 
 
 

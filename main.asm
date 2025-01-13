@@ -143,8 +143,8 @@ selection_loop:
 		CALL    check_key
 		CMP     AL, 0
 		JE      selection_loop
-		CALL    handle_key
-		JMP     selection_loop
+		JMP    handle_key
+
 
 check_key:
 		MOV    AH, 01h
@@ -170,7 +170,7 @@ handle_key:
 
 		CMP    AL, 0Dh
 		JE    selection_enter
-		RET
+		JMP     selection_loop
 
 selection_left:
 		CMP    byte[dificuldade], 0
@@ -442,7 +442,7 @@ cria_campo:
 	MOV		AX, 280
 	PUSH	AX
 	MOV 	byte[cor], verde
-	CALL 	bloco
+	CALL    bloco
 
 	MOV 	AX,620
 	PUSH	AX
@@ -465,19 +465,185 @@ cria_campo:
 	PUSH	AX
 	MOV 	byte[cor], vermelho
 	CALL 	bloco
-	
 
+	; Raquete esquerda
+	MOV  AX, WORD[paddle_left_top_x]
+	PUSH AX
+	MOV  AX, WORD[paddle_left_top_y]
+	PUSH AX
+	MOV  AX, WORD[paddle_left_bottom_x]
+	PUSH AX
+	MOV  AX, WORD[paddle_left_bottom_y]
+	PUSH AX
+	MOV  byte[cor], branco_intenso
+	CALL bloco
 
-; Parametros da bola inicialmente
+	; Raquete direita
+	MOV  AX, WORD[paddle_right_top_x]
+	PUSH AX
+	MOV  AX, WORD[paddle_right_top_y]
+	PUSH AX
+	MOV  AX, WORD[paddle_right_bottom_x]
+	PUSH AX
+	MOV  AX, WORD[paddle_right_bottom_y]
+	PUSH AX
+	MOV  byte[cor], branco_intenso
+	CALL bloco
+
+	;Parametros da bola inicialmente
 	MOV word[deltax], passo_bola
 	MOV word[deltay], passo_bola
-
 	MOV word[bola_x], 320
 	MOV word[bola_y], 26
 	MOV word[raio], 20
 
-loop_bola:
-	; verifica se a bola bateu na parede
+	JMP loop_jogo
+
+
+desenha_raquete_esquerda:
+	MOV  AX, WORD[paddle_left_top_x]
+	PUSH AX
+	MOV  AX, WORD[paddle_left_top_y]
+	PUSH AX
+	MOV  AX, WORD[paddle_left_bottom_x]
+	PUSH AX
+	MOV  AX, WORD[paddle_left_bottom_y]
+	PUSH AX
+	MOV  byte[cor], branco_intenso
+	CALL bloco
+	RET
+
+apaga_raquete_esquerda:
+	MOV  AX, WORD[paddle_left_top_x]
+	PUSH AX
+	MOV  AX, WORD[paddle_left_top_y]
+	PUSH AX
+	MOV  AX, WORD[paddle_left_bottom_x]
+	PUSH AX
+	MOV  AX, WORD[paddle_left_bottom_y]
+	PUSH AX
+	MOV  byte[cor], preto
+	CALL bloco
+	RET
+
+
+
+atualiza_raquete_esquerda_cima:
+	CMP  WORD[paddle_left_top_y], 360
+	JG  near continuacao_raquete
+
+	CALL  apaga_raquete_esquerda
+	
+	; Desenha nova raquete
+	ADD  WORD[paddle_left_top_y], 5
+	ADD  WORD[paddle_left_bottom_y], 5
+	CALL desenha_raquete_esquerda
+	JMP near continuacao_raquete
+
+
+atualiza_raquete_esquerda_baixo:
+	CMP  WORD[paddle_left_top_y], 25
+	JL  near continuacao_raquete
+
+	CALL  apaga_raquete_esquerda
+	
+	; Desenha nova raquete
+	SUB  WORD[paddle_left_top_y], 5
+	SUB  WORD[paddle_left_bottom_y], 5
+	CALL desenha_raquete_esquerda
+	JMP near continuacao_raquete
+
+desenha_raquete_direita:
+	MOV  AX, WORD[paddle_right_top_x]
+	PUSH AX
+	MOV  AX, WORD[paddle_right_top_y]
+	PUSH AX
+	MOV  AX, WORD[paddle_right_bottom_x]
+	PUSH AX
+	MOV  AX, WORD[paddle_right_bottom_y]
+	PUSH AX
+	MOV  byte[cor], branco_intenso
+	CALL bloco
+	RET
+
+
+apaga_raquete_direita:
+	MOV  AX, WORD[paddle_right_top_x]
+	PUSH AX
+	MOV  AX, WORD[paddle_right_top_y]
+	PUSH AX
+	MOV  AX, WORD[paddle_right_bottom_x]
+	PUSH AX
+	MOV  AX, WORD[paddle_right_bottom_y]
+	PUSH AX
+	MOV  byte[cor], preto
+	CALL bloco
+	RET
+
+atualiza_raquete_direita_cima:
+	CMP  WORD[paddle_right_top_y], 360
+	JG  continuacao_raquete
+
+	CALL  apaga_raquete_direita
+	
+	; Desenha nova raquete
+	ADD  WORD[paddle_right_top_y], 5
+	ADD  WORD[paddle_right_bottom_y], 5
+	CALL desenha_raquete_direita
+	JMP continuacao_raquete
+
+atualiza_raquete_direita_baixo:
+	CMP  WORD[paddle_right_top_y], 25
+	JL  continuacao_raquete
+
+	CALL  apaga_raquete_direita
+	
+	; Desenha nova raquete
+	SUB  WORD[paddle_right_top_y], 5
+	SUB  WORD[paddle_right_bottom_y], 5
+	CALL desenha_raquete_direita
+	JMP continuacao_raquete
+
+check_key_jogo:
+		MOV    AH, 01h
+		INT    16h
+		JZ     continuacao_raquete
+		MOV    AH, 00h
+		INT    16h
+		RET
+
+handle_key_jogo:
+	CMP	   AL, 77h
+	JE 	   near atualiza_raquete_esquerda_cima
+	CMP    AL, 73h
+	JE 	   near atualiza_raquete_esquerda_baixo
+	CMP    AL, 6Fh
+	JE     atualiza_raquete_direita_cima
+	CMP    AL, 6Ch
+	JE	   atualiza_raquete_direita_baixo
+	
+	CMP    AL, 71h
+	JE     sair
+
+	JMP    continuacao_raquete
+
+sair:
+	MOV  	AH,0   						; set video mode
+	MOV  	AL,[modo_anterior]   		; modo anterior
+	INT  	10h
+	MOV     AX,4c00h
+	INT     21h
+
+loop_jogo:
+
+	CALL    check_key_jogo
+	CMP     AL, 0
+	JE      continuacao_raquete
+	JMP     handle_key_jogo
+
+continuacao_raquete:
+
+; verifica se a bola bateu na parede
 	CMP 	WORD[bola_x], 40
 	JL		bateu_na_parede_esquerda
 	CMP 	WORD[bola_x], 600
@@ -486,6 +652,10 @@ loop_bola:
 	JL		bateu_na_parede_inferior
 	CMP 	WORD[bola_y], 454
 	JG		bateu_na_parede_superior
+
+; verifica se a bola bateu na raquete
+	
+
 
 passo1:
 	;; apaga a bola
@@ -516,7 +686,7 @@ passo1:
 	MOV     byte[cor], vermelho
 	CALL 	full_circle
 
-	JMP 	loop_bola
+	JMP 	loop_jogo
 
 bateu_na_parede_esquerda:
 	MOV 	WORD[deltax], passo_bola
@@ -593,6 +763,19 @@ raio            dw      0
 bola_x 		dw      0
 bola_y 		dw      0
 passo_bola EQU 4
+
+; Posição da raquete esquerda
+paddle_left_top_x    dw 40     ; coordenada X do canto superior
+paddle_left_top_y    dw 200    ; coordenada Y do canto superior
+paddle_left_bottom_x dw 50     ; coordenada X do canto inferior
+paddle_left_bottom_y dw 300   ; coordenada Y do canto inferior
+
+; Posição da raquete direita
+paddle_right_top_x    dw 590     ; coordenada X do canto superior
+paddle_right_top_y    dw 200    ; coordenada Y do canto superior
+paddle_right_bottom_x dw 600     ; coordenada X do canto inferior
+paddle_right_bottom_y dw 300    ; coordenada Y do canto inferior
+
 
 ;*************************************************************************
 segment stack stack
