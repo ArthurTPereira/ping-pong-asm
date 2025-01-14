@@ -467,25 +467,25 @@ cria_campo:
 	CALL 	bloco
 
 	; Raquete esquerda
-	MOV  AX, WORD[paddle_left_top_x]
+	MOV  AX, WORD[x1_raquete_esquerda]
 	PUSH AX
-	MOV  AX, WORD[paddle_left_top_y]
+	MOV  AX, WORD[y1_raquete_esquerda]
 	PUSH AX
-	MOV  AX, WORD[paddle_left_bottom_x]
+	MOV  AX, WORD[x2_raquete_esquerda]
 	PUSH AX
-	MOV  AX, WORD[paddle_left_bottom_y]
+	MOV  AX, WORD[y2_raquete_esquerda]
 	PUSH AX
 	MOV  byte[cor], branco_intenso
 	CALL bloco
 
 	; Raquete direita
-	MOV  AX, WORD[paddle_right_top_x]
+	MOV  AX, WORD[x1_raquete_direita]
 	PUSH AX
-	MOV  AX, WORD[paddle_right_top_y]
+	MOV  AX, WORD[y1_raquete_direita]
 	PUSH AX
-	MOV  AX, WORD[paddle_right_bottom_x]
+	MOV  AX, WORD[x2_raquete_direita]
 	PUSH AX
-	MOV  AX, WORD[paddle_right_bottom_y]
+	MOV  AX, WORD[y2_raquete_direita]
 	PUSH AX
 	MOV  byte[cor], branco_intenso
 	CALL bloco
@@ -493,34 +493,31 @@ cria_campo:
 	;Parametros da bola inicialmente
 	MOV word[deltax], passo_bola
 	MOV word[deltay], passo_bola
-	MOV word[bola_x], 320
-	MOV word[bola_y], 26
-	MOV word[raio], 20
 
 	JMP loop_jogo
 
 
 desenha_raquete_esquerda:
-	MOV  AX, WORD[paddle_left_top_x]
+	MOV  AX, WORD[x1_raquete_esquerda]
 	PUSH AX
-	MOV  AX, WORD[paddle_left_top_y]
+	MOV  AX, WORD[y1_raquete_esquerda]
 	PUSH AX
-	MOV  AX, WORD[paddle_left_bottom_x]
+	MOV  AX, WORD[x2_raquete_esquerda]
 	PUSH AX
-	MOV  AX, WORD[paddle_left_bottom_y]
+	MOV  AX, WORD[y2_raquete_esquerda]
 	PUSH AX
 	MOV  byte[cor], branco_intenso
 	CALL bloco
 	RET
 
 apaga_raquete_esquerda:
-	MOV  AX, WORD[paddle_left_top_x]
+	MOV  AX, WORD[x1_raquete_esquerda]
 	PUSH AX
-	MOV  AX, WORD[paddle_left_top_y]
+	MOV  AX, WORD[y1_raquete_esquerda]
 	PUSH AX
-	MOV  AX, WORD[paddle_left_bottom_x]
+	MOV  AX, WORD[x2_raquete_esquerda]
 	PUSH AX
-	MOV  AX, WORD[paddle_left_bottom_y]
+	MOV  AX, WORD[y2_raquete_esquerda]
 	PUSH AX
 	MOV  byte[cor], preto
 	CALL bloco
@@ -529,38 +526,38 @@ apaga_raquete_esquerda:
 
 
 atualiza_raquete_esquerda_cima:
-	CMP  WORD[paddle_left_top_y], 360
+	CMP  WORD[y2_raquete_esquerda], 450
 	JG  near continuacao_raquete
 
 	CALL  apaga_raquete_esquerda
 	
 	; Desenha nova raquete
-	ADD  WORD[paddle_left_top_y], 5
-	ADD  WORD[paddle_left_bottom_y], 5
+	ADD  WORD[y2_raquete_esquerda], 5
+	ADD  WORD[y1_raquete_esquerda], 5
 	CALL desenha_raquete_esquerda
 	JMP near continuacao_raquete
 
 
 atualiza_raquete_esquerda_baixo:
-	CMP  WORD[paddle_left_top_y], 25
+	CMP  WORD[y1_raquete_esquerda], 25
 	JL  near continuacao_raquete
 
 	CALL  apaga_raquete_esquerda
 	
 	; Desenha nova raquete
-	SUB  WORD[paddle_left_top_y], 5
-	SUB  WORD[paddle_left_bottom_y], 5
+	SUB  WORD[y2_raquete_esquerda], 5
+	SUB  WORD[y1_raquete_esquerda], 5
 	CALL desenha_raquete_esquerda
 	JMP near continuacao_raquete
 
 desenha_raquete_direita:
-	MOV  AX, WORD[paddle_right_top_x]
+	MOV  AX, WORD[x1_raquete_direita]
 	PUSH AX
-	MOV  AX, WORD[paddle_right_top_y]
+	MOV  AX, WORD[y1_raquete_direita]
 	PUSH AX
-	MOV  AX, WORD[paddle_right_bottom_x]
+	MOV  AX, WORD[x2_raquete_direita]
 	PUSH AX
-	MOV  AX, WORD[paddle_right_bottom_y]
+	MOV  AX, WORD[y2_raquete_direita]
 	PUSH AX
 	MOV  byte[cor], branco_intenso
 	CALL bloco
@@ -568,39 +565,39 @@ desenha_raquete_direita:
 
 
 apaga_raquete_direita:
-	MOV  AX, WORD[paddle_right_top_x]
+	MOV  AX, WORD[x1_raquete_direita]
 	PUSH AX
-	MOV  AX, WORD[paddle_right_top_y]
+	MOV  AX, WORD[y1_raquete_direita]
 	PUSH AX
-	MOV  AX, WORD[paddle_right_bottom_x]
+	MOV  AX, WORD[x2_raquete_direita]
 	PUSH AX
-	MOV  AX, WORD[paddle_right_bottom_y]
+	MOV  AX, WORD[y2_raquete_direita]
 	PUSH AX
 	MOV  byte[cor], preto
 	CALL bloco
 	RET
 
 atualiza_raquete_direita_cima:
-	CMP  WORD[paddle_right_top_y], 360
+	CMP  WORD[y2_raquete_direita], 450
 	JG  continuacao_raquete
 
 	CALL  apaga_raquete_direita
 	
 	; Desenha nova raquete
-	ADD  WORD[paddle_right_top_y], 5
-	ADD  WORD[paddle_right_bottom_y], 5
+	ADD  WORD[y2_raquete_direita], 5
+	ADD  WORD[y1_raquete_direita], 5
 	CALL desenha_raquete_direita
 	JMP continuacao_raquete
 
 atualiza_raquete_direita_baixo:
-	CMP  WORD[paddle_right_top_y], 25
+	CMP  WORD[y1_raquete_direita], 25
 	JL  continuacao_raquete
 
 	CALL  apaga_raquete_direita
 	
 	; Desenha nova raquete
-	SUB  WORD[paddle_right_top_y], 5
-	SUB  WORD[paddle_right_bottom_y], 5
+	SUB  WORD[y2_raquete_direita], 5
+	SUB  WORD[y1_raquete_direita], 5
 	CALL desenha_raquete_direita
 	JMP continuacao_raquete
 
@@ -627,12 +624,14 @@ handle_key_jogo:
 
 	JMP    continuacao_raquete
 
+
 sair:
 	MOV  	AH,0   						; set video mode
 	MOV  	AL,[modo_anterior]   		; modo anterior
 	INT  	10h
 	MOV     AX,4c00h
 	INT     21h
+
 
 loop_jogo:
 
@@ -645,17 +644,46 @@ continuacao_raquete:
 
 ; verifica se a bola bateu na parede
 	CMP 	WORD[bola_x], 40
-	JL		bateu_na_parede_esquerda
+	JL		near bateu_na_parede_esquerda
 	CMP 	WORD[bola_x], 600
-	JG		bateu_na_parede_direita
+	JG		near bateu_na_parede_direita
 	CMP 	WORD[bola_y], 26
-	JL		bateu_na_parede_inferior
+	JL		near bateu_na_parede_inferior
 	CMP 	WORD[bola_y], 454
-	JG		bateu_na_parede_superior
+	JG		near bateu_na_parede_superior
 
-; verifica se a bola bateu na raquete
-	
 
+	; Verifica se a bola bateu na raquete esquerda
+	MOV 	AX, WORD[bola_x]
+	SUB 	AX, WORD[raio]
+	SUB     AX, 5 ; margem
+	CMP 	AX, WORD[x2_raquete_esquerda]
+	JG  	verifica_colisao_raquete_direita
+
+	MOV 	AX, WORD[bola_y]
+	CMP 	AX, WORD[y1_raquete_esquerda]
+	JL  	verifica_colisao_raquete_direita
+	CMP     AX, WORD[y2_raquete_esquerda]
+	JG      verifica_colisao_raquete_direita
+
+	; Aqui teve colisao
+	JMP      bateu_na_parede_esquerda
+
+verifica_colisao_raquete_direita:
+; verifica se a bola bateu na raquete direita
+	MOV 	AX, WORD[bola_x]
+	ADD     AX, WORD[raio]
+	ADD     AX, 5 ; margem
+	CMP 	AX, WORD[x1_raquete_direita]
+	JL 		passo1
+
+	MOV 	AX, WORD[bola_y]
+	CMP 	AX, WORD[y1_raquete_direita]
+	JL  	passo1
+	CMP     AX, WORD[y2_raquete_direita]
+	JG      passo1
+
+	JMP		bateu_na_parede_direita
 
 passo1:
 	;; apaga a bola
@@ -759,22 +787,22 @@ facil           db      'FACIL $'
 medio           db      'MEDIO $'
 dificil         db      'DIFICIL $'
 dificuldade     db      0
-raio            dw      0
-bola_x 		dw      0
-bola_y 		dw      0
+raio            dw      16
+bola_x 		dw      320
+bola_y 		dw      26
 passo_bola EQU 4
 
 ; Posição da raquete esquerda
-paddle_left_top_x    dw 40     ; coordenada X do canto superior
-paddle_left_top_y    dw 200    ; coordenada Y do canto superior
-paddle_left_bottom_x dw 50     ; coordenada X do canto inferior
-paddle_left_bottom_y dw 300   ; coordenada Y do canto inferior
+x1_raquete_esquerda    dw 40     ; x1
+y1_raquete_esquerda   dw 200    ; y1
+x2_raquete_esquerda dw 50     ; x2
+y2_raquete_esquerda dw 300   ; y2
 
 ; Posição da raquete direita
-paddle_right_top_x    dw 590     ; coordenada X do canto superior
-paddle_right_top_y    dw 200    ; coordenada Y do canto superior
-paddle_right_bottom_x dw 600     ; coordenada X do canto inferior
-paddle_right_bottom_y dw 300    ; coordenada Y do canto inferior
+x1_raquete_direita   dw 590     ; coordenada X do canto superior
+y1_raquete_direita     dw 200    ; coordenada Y do canto superior
+x2_raquete_direita  dw 600     ; coordenada X do canto inferior
+y2_raquete_direita  dw 300    ; coordenada Y do canto inferior
 
 
 ;*************************************************************************
