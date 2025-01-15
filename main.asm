@@ -362,51 +362,51 @@ cria_campo:
 	PUSH	AX
 	MOV		AX,20
 	PUSH	AX
-	MOV		AX, 90
+	MOV		AX, 95
 	PUSH	AX
 	MOV 	byte[cor], azul
 	CALL 	bloco
 
 	MOV 	AX,0
 	PUSH	AX
-	MOV		AX, 95
+	MOV		AX, 100
 	PUSH	AX
 	MOV		AX,20
 	PUSH	AX
-	MOV		AX, 185
+	MOV		AX, 190
 	PUSH	AX
 	MOV 	byte[cor], azul_claro
 	CALL 	bloco
 
 	MOV 	AX,0
 	PUSH	AX
-	MOV		AX, 190
+	MOV		AX, 195
 	PUSH	AX
 	MOV		AX,20
 	PUSH	AX
-	MOV		AX, 280
+	MOV		AX, 285
 	PUSH	AX
 	MOV 	byte[cor], verde
 	CALL 	bloco
 
 	MOV 	AX,0
 	PUSH	AX
-	MOV		AX, 285
+	MOV		AX, 290
 	PUSH	AX
 	MOV		AX,20
 	PUSH	AX
-	MOV		AX, 375
+	MOV		AX, 380
 	PUSH	AX
 	MOV 	byte[cor], amarelo
 	CALL 	bloco
 
 	MOV 	AX,0
 	PUSH	AX
-	MOV		AX, 380
+	MOV		AX, 385
 	PUSH	AX
 	MOV		AX,20
 	PUSH	AX
-	MOV		AX, 470
+	MOV		AX, 475
 	PUSH	AX
 	MOV 	byte[cor], vermelho
 	CALL 	bloco
@@ -417,51 +417,51 @@ cria_campo:
 	PUSH	AX
 	MOV		AX,639
 	PUSH	AX
-	MOV		AX, 90
+	MOV		AX, 95
 	PUSH	AX
 	MOV 	byte[cor], azul
 	CALL 	bloco
 
 	MOV 	AX,620
 	PUSH	AX
-	MOV		AX, 95
+	MOV		AX, 100
 	PUSH	AX
 	MOV		AX,639
 	PUSH	AX
-	MOV		AX, 185
+	MOV		AX, 190
 	PUSH	AX
 	MOV 	byte[cor], azul_claro
 	CALL 	bloco
 
 	MOV 	AX,620
 	PUSH	AX
-	MOV		AX, 190
+	MOV		AX, 195
 	PUSH	AX
 	MOV		AX,639
 	PUSH	AX
-	MOV		AX, 280
+	MOV		AX, 285
 	PUSH	AX
 	MOV 	byte[cor], verde
 	CALL    bloco
 
 	MOV 	AX,620
 	PUSH	AX
-	MOV		AX, 285
+	MOV		AX, 290
 	PUSH	AX
 	MOV		AX,639
 	PUSH	AX
-	MOV		AX, 375
+	MOV		AX, 380
 	PUSH	AX
 	MOV 	byte[cor], amarelo
 	CALL 	bloco
 
 	MOV 	AX,620
 	PUSH	AX
-	MOV		AX, 380
+	MOV		AX, 385
 	PUSH	AX
 	MOV		AX,639
 	PUSH	AX
-	MOV		AX, 470
+	MOV		AX, 475
 	PUSH	AX
 	MOV 	byte[cor], vermelho
 	CALL 	bloco
