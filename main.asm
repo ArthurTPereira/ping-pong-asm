@@ -643,10 +643,10 @@ loop_jogo:
 continuacao_raquete:
 
 ; verifica se a bola bateu na parede
-	; CMP 	WORD[bola_x], 40
-	; JL		near bateu_na_parede_esquerda
-	; CMP 	WORD[bola_x], 600
-	; JG		near bateu_na_parede_direita
+	CMP 	WORD[bola_x], 25
+	JL		near bateu_na_parede_esquerda
+	CMP 	WORD[bola_x], 585
+	JG		near bateu_na_parede_direita
 	CMP 	WORD[bola_y], 26
 	JL		near bateu_na_parede_inferior
 	CMP 	WORD[bola_y], 454
@@ -675,13 +675,13 @@ verifica_colisao_raquete_direita:
 	ADD     AX, WORD[raio]
 	ADD     AX, 5 ; margem
 	CMP 	AX, WORD[x1_raquete_direita]
-	JL 		passo1
+	JL 		near verifica_gol_esquerdo
 
 	MOV 	AX, WORD[bola_y]
 	CMP 	AX, WORD[y1_raquete_direita]
-	JL  	passo1
+	JL  	near verifica_gol_esquerdo
 	CMP     AX, WORD[y2_raquete_direita]
-	JG      passo1
+	JG      near verifica_gol_esquerdo
 
 	JMP		bateu_na_parede_direita
 
@@ -706,7 +706,13 @@ verifica_gol_azul_escuro:
 	PUSH	AX
 	MOV 	byte[cor], preto
 	CALL 	bloco
-	JMP 	passo1
+
+	CMP    WORD[azul_escuro_esquerdo], 1
+	JE     near fim_jogo
+	MOV    WORD[azul_escuro_esquerdo], 1
+	
+
+	JMP 	bateu_na_parede_esquerda ; inverte a direção da bola apos quebrar o bloco
 verifica_gol_azul_claro:	
 	MOV 	AX, word[bola_y]	
 	CMP		AX,194
@@ -721,7 +727,12 @@ verifica_gol_azul_claro:
 	PUSH	AX
 	MOV 	byte[cor], preto
 	CALL 	bloco
-	JMP 	passo1
+
+	CMP    WORD[azul_claro_esquerdo], 1
+	JE     near fim_jogo
+	MOV    WORD[azul_claro_esquerdo], 1
+
+	JMP 	bateu_na_parede_esquerda
 verifica_gol_verde:	
 	MOV 	AX, word[bola_y]	
 	CMP		AX,289
@@ -736,7 +747,12 @@ verifica_gol_verde:
 	PUSH	AX
 	MOV 	byte[cor], preto
 	CALL 	bloco
-	JMP 	passo1
+
+	CMP	    WORD[verde_esquerdo], 1
+	JE      near fim_jogo
+	MOV     WORD[verde_esquerdo], 1
+
+	JMP 	bateu_na_parede_esquerda
 verifica_gol_amarelo:
 	MOV 	AX, word[bola_y]	
 	CMP		AX,384	
@@ -751,7 +767,12 @@ verifica_gol_amarelo:
 	PUSH	AX
 	MOV 	byte[cor], preto
 	CALL 	bloco
-	JMP 	passo1
+
+	CMP    WORD[amarelo_esquerdo], 1
+	JE     near fim_jogo
+	MOV    WORD[amarelo_esquerdo], 1
+
+	JMP 	bateu_na_parede_esquerda
 verifica_gol_vermelho:	
 
 	MOV		AX, 0
@@ -763,7 +784,13 @@ verifica_gol_vermelho:
 	MOV		AX, 475
 	PUSH	AX
 	MOV 	byte[cor], preto
-	CALL 	bloco
+	CALL    bloco
+
+	CMP    WORD[vermelho_esquerdo], 1
+	JE     near fim_jogo
+	MOV    WORD[vermelho_esquerdo], 1
+
+	JMP 	bateu_na_parede_esquerda
 
 
 passo1:
@@ -795,6 +822,10 @@ passo1:
 	MOV     byte[cor], vermelho
 	CALL 	full_circle
 
+	; desenha as raquetes novamente por que a bola nova pode apagar elas
+	CALL    desenha_raquete_esquerda
+	CALL    desenha_raquete_direita
+
 	JMP 	loop_jogo
 
 bateu_na_parede_esquerda:
@@ -814,8 +845,30 @@ bateu_na_parede_superior:
 	JMP 	passo1
 
 
-	JMP selection_loop
+fim_jogo:
+		MOV 	CX,17						;número de caracteres
+    	MOV    	BX,0			
+    	MOV    	DH,15						;linha 0-29
+    	MOV     DL,30						;coluna 0-79
+		MOV		byte [cor],branco_intenso
+l_morreu:
+		CALL	cursor
+		;MOV     DI,DS
+    	MOV     AL,[BX+morreu]
+		
+		CALL	caracter
+    	INC		BX							;proximo caracter
+		INC		DL							;avanca a coluna
+		; INC		byte[cor]				;mudar a cor para a seguinte
+    	LOOP    l_morreu
 
+rejogar:
+; por enquanto so esta saindo do jogo
+		MOV    AH, 01h
+		INT    16h
+		CMP    AL, 71h
+		JE    near sair
+		JMP   rejogar
 
 segment data
 
@@ -867,6 +920,7 @@ desenvolvido	dw		'Desenvolvido por: esguicho, otoch, tvin $'
 facil           db      'FACIL $'
 medio           db      'MEDIO $'
 dificil         db      'DIFICIL $'
+morreu          db      'morreu mane kkkk$'
 dificuldade     db      0
 raio            dw      16
 bola_x 		dw      320
@@ -878,6 +932,14 @@ x1_raquete_esquerda    dw 40     ; x1
 y1_raquete_esquerda   dw 200    ; y1
 x2_raquete_esquerda dw 50     ; x2
 y2_raquete_esquerda dw 300   ; y2
+
+; Variáveis para controle de colisão dos blocos da esquerda
+vermelho_esquerdo dw 0
+amarelo_esquerdo dw 0
+verde_esquerdo dw 0
+azul_claro_esquerdo dw 0
+azul_escuro_esquerdo dw 0
+
 
 ; Posição da raquete direita
 x1_raquete_direita   dw 590     ; coordenada X do canto superior
