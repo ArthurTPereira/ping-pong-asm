@@ -643,10 +643,10 @@ loop_jogo:
 continuacao_raquete:
 
 ; verifica se a bola bateu na parede
-	CMP 	WORD[bola_x], 40
-	JL		near bateu_na_parede_esquerda
-	CMP 	WORD[bola_x], 600
-	JG		near bateu_na_parede_direita
+	; CMP 	WORD[bola_x], 40
+	; JL		near bateu_na_parede_esquerda
+	; CMP 	WORD[bola_x], 600
+	; JG		near bateu_na_parede_direita
 	CMP 	WORD[bola_y], 26
 	JL		near bateu_na_parede_inferior
 	CMP 	WORD[bola_y], 454
@@ -684,6 +684,87 @@ verifica_colisao_raquete_direita:
 	JG      passo1
 
 	JMP		bateu_na_parede_direita
+
+verifica_gol_esquerdo:
+	MOV 	AX, WORD[bola_x]
+	SUB 	AX, WORD[raio]
+	CMP 	AX, 20
+	JLE 	verifica_gol_azul_escuro
+	JMP 	passo1
+
+verifica_gol_azul_escuro:
+	MOV 	AX, word[bola_y]
+	CMP		AX,99
+	JG		verifica_gol_azul_claro
+	MOV		AX, 0
+	PUSH	AX
+	MOV		AX, 5
+	PUSH	AX
+	MOV		AX, 20
+	PUSH	AX
+	MOV		AX, 95
+	PUSH	AX
+	MOV 	byte[cor], preto
+	CALL 	bloco
+	JMP 	passo1
+verifica_gol_azul_claro:	
+	MOV 	AX, word[bola_y]	
+	CMP		AX,194
+	JG		verifica_gol_verde
+	MOV		AX, 0
+	PUSH	AX
+	MOV		AX, 100
+	PUSH	AX
+	MOV		AX, 20
+	PUSH	AX
+	MOV		AX, 190
+	PUSH	AX
+	MOV 	byte[cor], preto
+	CALL 	bloco
+	JMP 	passo1
+verifica_gol_verde:	
+	MOV 	AX, word[bola_y]	
+	CMP		AX,289
+	JG		verifica_gol_amarelo
+	MOV		AX, 0
+	PUSH	AX
+	MOV		AX, 195
+	PUSH	AX
+	MOV		AX, 20
+	PUSH	AX
+	MOV		AX, 285
+	PUSH	AX
+	MOV 	byte[cor], preto
+	CALL 	bloco
+	JMP 	passo1
+verifica_gol_amarelo:
+	MOV 	AX, word[bola_y]	
+	CMP		AX,384	
+	JG		verifica_gol_vermelho
+	MOV		AX, 0
+	PUSH	AX
+	MOV		AX, 290
+	PUSH	AX
+	MOV		AX, 20
+	PUSH	AX
+	MOV		AX, 380
+	PUSH	AX
+	MOV 	byte[cor], preto
+	CALL 	bloco
+	JMP 	passo1
+verifica_gol_vermelho:	
+
+	MOV		AX, 0
+	PUSH	AX
+	MOV		AX, 385
+	PUSH	AX
+	MOV		AX, 20
+	PUSH	AX
+	MOV		AX, 475
+	PUSH	AX
+	MOV 	byte[cor], preto
+	CALL 	bloco
+
 
 passo1:
 	;; apaga a bola
@@ -803,6 +884,9 @@ x1_raquete_direita   dw 590     ; coordenada X do canto superior
 y1_raquete_direita     dw 200    ; coordenada Y do canto superior
 x2_raquete_direita  dw 600     ; coordenada X do canto inferior
 y2_raquete_direita  dw 300    ; coordenada Y do canto inferior
+
+
+
 
 
 ;*************************************************************************
