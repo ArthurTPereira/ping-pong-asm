@@ -645,7 +645,7 @@ continuacao_raquete:
 ; verifica se a bola bateu na parede
 	CMP 	WORD[bola_x], 25
 	JL		near bateu_na_parede_esquerda
-	CMP 	WORD[bola_x], 585
+	CMP 	WORD[bola_x], 630
 	JG		near bateu_na_parede_direita
 	CMP 	WORD[bola_y], 26
 	JL		near bateu_na_parede_inferior
@@ -689,13 +689,13 @@ verifica_gol_esquerdo:
 	MOV 	AX, WORD[bola_x]
 	SUB 	AX, WORD[raio]
 	CMP 	AX, 20
-	JLE 	verifica_gol_azul_escuro
-	JMP 	passo1
+	JLE 	verifica_gol_azul_escuro_esquerdo
+	JMP 	verifica_gol_direito
 
-verifica_gol_azul_escuro:
+verifica_gol_azul_escuro_esquerdo:
 	MOV 	AX, word[bola_y]
 	CMP		AX,99
-	JG		verifica_gol_azul_claro
+	JG		verifica_gol_azul_claro_esquerdo
 	MOV		AX, 0
 	PUSH	AX
 	MOV		AX, 5
@@ -713,10 +713,10 @@ verifica_gol_azul_escuro:
 	
 
 	JMP 	bateu_na_parede_esquerda ; inverte a direção da bola apos quebrar o bloco
-verifica_gol_azul_claro:	
+verifica_gol_azul_claro_esquerdo:	
 	MOV 	AX, word[bola_y]	
 	CMP		AX,194
-	JG		verifica_gol_verde
+	JG		verifica_gol_verde_esquerdo
 	MOV		AX, 0
 	PUSH	AX
 	MOV		AX, 100
@@ -733,10 +733,10 @@ verifica_gol_azul_claro:
 	MOV    WORD[azul_claro_esquerdo], 1
 
 	JMP 	bateu_na_parede_esquerda
-verifica_gol_verde:	
+verifica_gol_verde_esquerdo:	
 	MOV 	AX, word[bola_y]	
 	CMP		AX,289
-	JG		verifica_gol_amarelo
+	JG		verifica_gol_amarelo_esquerdo
 	MOV		AX, 0
 	PUSH	AX
 	MOV		AX, 195
@@ -753,10 +753,10 @@ verifica_gol_verde:
 	MOV     WORD[verde_esquerdo], 1
 
 	JMP 	bateu_na_parede_esquerda
-verifica_gol_amarelo:
+verifica_gol_amarelo_esquerdo:
 	MOV 	AX, word[bola_y]	
 	CMP		AX,384	
-	JG		verifica_gol_vermelho
+	JG		verifica_gol_vermelho_esquerdo
 	MOV		AX, 0
 	PUSH	AX
 	MOV		AX, 290
@@ -773,7 +773,7 @@ verifica_gol_amarelo:
 	MOV    WORD[amarelo_esquerdo], 1
 
 	JMP 	bateu_na_parede_esquerda
-verifica_gol_vermelho:	
+verifica_gol_vermelho_esquerdo:	
 
 	MOV		AX, 0
 	PUSH	AX
@@ -791,6 +791,118 @@ verifica_gol_vermelho:
 	MOV    WORD[vermelho_esquerdo], 1
 
 	JMP 	bateu_na_parede_esquerda
+
+verifica_gol_direito:
+	MOV 	AX, word[bola_x]
+	ADD 	AX, WORD[raio]
+	CMP 	AX, 615
+	JGE 	verifica_gol_azul_escuro_direito
+	JMP 	passo1
+
+verifica_gol_azul_escuro_direito:
+	MOV     AX, word[bola_y]
+	ADD 	AX, WORD[raio]
+	CMP     AX, 89
+	JG      verifica_gol_azul_claro_direito
+	MOV 	AX,620
+	PUSH	AX
+	MOV		AX, 5
+	PUSH	AX
+	MOV		AX,639
+	PUSH	AX
+	MOV		AX, 95
+	PUSH	AX
+	MOV 	byte[cor], preto
+	CALL 	bloco
+
+	CMP    WORD[azul_escuro_direito], 1
+	JE     near fim_jogo
+	MOV    WORD[azul_escuro_direito], 1
+
+	JMP     bateu_na_parede_direita
+
+verifica_gol_azul_claro_direito:
+	MOV     AX, word[bola_y]
+	ADD 	AX, WORD[raio]
+	CMP     AX, 184
+	JG      verifica_gol_verde_direito
+	MOV 	AX,620
+	PUSH	AX
+	MOV		AX, 100
+	PUSH	AX
+	MOV		AX,639
+	PUSH	AX
+	MOV		AX, 190
+	PUSH	AX
+	MOV 	byte[cor], preto
+	CALL 	bloco
+
+	CMP    WORD[azul_claro_direito], 1
+	JE     near fim_jogo
+	MOV    WORD[azul_claro_direito], 1
+
+	JMP     bateu_na_parede_direita
+	
+verifica_gol_verde_direito:	
+	MOV 	AX, word[bola_y]	
+	CMP		AX,289
+	JG		verifica_gol_amarelo_direito
+	MOV		AX, 620
+	PUSH	AX
+	MOV		AX, 195
+	PUSH	AX
+	MOV		AX, 639
+	PUSH	AX
+	MOV		AX, 285
+	PUSH	AX
+	MOV 	byte[cor], preto
+	CALL 	bloco
+
+	CMP	    WORD[verde_direito], 1
+	JE      near fim_jogo
+	MOV     WORD[verde_direito], 1
+
+	JMP 	bateu_na_parede_direita
+
+verifica_gol_amarelo_direito:
+	MOV 	AX, word[bola_y]	
+	CMP		AX,384	
+	JG		verifica_gol_vermelho_direito
+	MOV 	AX,620
+	PUSH	AX
+	MOV		AX, 290
+	PUSH	AX
+	MOV		AX,639
+	PUSH	AX
+	MOV		AX, 380
+	PUSH	AX
+	MOV 	byte[cor], preto
+	CALL 	bloco
+
+	CMP    WORD[amarelo_direito], 1
+	JE     near fim_jogo
+	MOV    WORD[amarelo_direito], 1
+
+	JMP 	bateu_na_parede_direita
+
+verifica_gol_vermelho_direito:	
+
+	MOV 	AX,620
+	PUSH	AX
+	MOV		AX, 385
+	PUSH	AX
+	MOV		AX,639
+	PUSH	AX
+	MOV		AX, 475
+	PUSH	AX
+	MOV 	byte[cor], preto
+	CALL    bloco
+
+	CMP    WORD[vermelho_direito], 1
+	JE     near fim_jogo
+	MOV    WORD[vermelho_direito], 1
+
+	JMP 	bateu_na_parede_direita
 
 
 passo1:
@@ -865,6 +977,8 @@ l_morreu:
 rejogar:
 ; por enquanto so esta saindo do jogo
 		MOV    AH, 01h
+		INT    16h
+		MOV    AH, 00h
 		INT    16h
 		CMP    AL, 71h
 		JE    near sair
@@ -947,6 +1061,11 @@ y1_raquete_direita     dw 200    ; coordenada Y do canto superior
 x2_raquete_direita  dw 600     ; coordenada X do canto inferior
 y2_raquete_direita  dw 300    ; coordenada Y do canto inferior
 
+vermelho_direito dw 0
+amarelo_direito dw 0
+verde_direito dw 0
+azul_claro_direito dw 0
+azul_escuro_direito dw 0
 
 
 
