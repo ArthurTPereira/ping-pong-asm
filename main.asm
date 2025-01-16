@@ -187,6 +187,24 @@ selection_right:
 		JMP   erase_cursor
 
 selection_enter:
+		CMP  	byte[dificuldade], 0
+		JE		velocidade_facil
+		CMP  	byte[dificuldade], 1
+		JE		velocidade_medio
+		CMP 	byte[dificuldade], 2
+		JE      velocidade_dificil
+		
+velocidade_facil:
+		MOV    word[passo_bola], 5
+		JMP 	inicia_jogo
+velocidade_medio: 
+		MOV    word[passo_bola], 8
+		JMP 	inicia_jogo
+velocidade_dificil:
+		MOV    word[passo_bola], 10
+		JMP 	inicia_jogo
+
+inicia_jogo:
 		CALL	reset_tela
 		JMP		cria_campo
 	    
@@ -491,8 +509,10 @@ cria_campo:
 	CALL bloco
 
 	;Parametros da bola inicialmente
-	MOV word[deltax], passo_bola
-	MOV word[deltay], passo_bola
+	MOV AX, [passo_bola]
+	MOV word[deltax], AX
+	MOV AX, [passo_bola]
+	MOV word[deltay], AX
 
 	JMP loop_jogo
 
@@ -647,7 +667,7 @@ continuacao_raquete:
 	JL		near bateu_na_parede_esquerda
 	CMP 	WORD[bola_x], 630
 	JG		near bateu_na_parede_direita
-	CMP 	WORD[bola_y], 26
+	CMP 	WORD[bola_y], 32
 	JL		near bateu_na_parede_inferior
 	CMP 	WORD[bola_y], 454
 	JG		near bateu_na_parede_superior
@@ -688,7 +708,7 @@ verifica_colisao_raquete_direita:
 verifica_gol_esquerdo:
 	MOV 	AX, WORD[bola_x]
 	SUB 	AX, WORD[raio]
-	CMP 	AX, 20
+	CMP 	AX, 25
 	JLE 	verifica_gol_azul_escuro_esquerdo
 	JMP 	verifica_gol_direito
 
@@ -795,7 +815,7 @@ verifica_gol_vermelho_esquerdo:
 verifica_gol_direito:
 	MOV 	AX, word[bola_x]
 	ADD 	AX, WORD[raio]
-	CMP 	AX, 615
+	CMP 	AX, 610
 	JGE 	verifica_gol_azul_escuro_direito
 	JMP 	passo1
 
@@ -932,7 +952,7 @@ passo1:
 	MOV		AX, WORD[raio]
 	PUSH	AX
 	MOV     byte[cor], vermelho
-	CALL 	full_circle
+	CALL 	circle
 
 	; desenha as raquetes novamente por que a bola nova pode apagar elas
 	CALL    desenha_raquete_esquerda
@@ -941,19 +961,25 @@ passo1:
 	JMP 	loop_jogo
 
 bateu_na_parede_esquerda:
-	MOV 	WORD[deltax], passo_bola
+	MOV 	AX, WORD[passo_bola]
+	MOV 	WORD[deltax], AX
 	JMP 	passo1
 
 bateu_na_parede_direita:
-	MOV 	WORD[deltax], -passo_bola
+	MOV 	AX, word[passo_bola]
+	NEG 	AX  
+	MOV 	WORD[deltax], AX
 	JMP 	passo1
 
 bateu_na_parede_inferior:
-	MOV 	WORD[deltay], passo_bola
+	MOV 	AX, WORD[passo_bola]
+	MOV 	WORD[deltay], AX
 	JMP 	passo1
 
 bateu_na_parede_superior:
-	MOV 	WORD[deltay], -passo_bola
+	MOV 	AX, WORD[passo_bola]
+	NEG 	AX
+	MOV 	WORD[deltay], AX
 	JMP 	passo1
 
 
@@ -1039,7 +1065,8 @@ dificuldade     db      0
 raio            dw      16
 bola_x 		dw      320
 bola_y 		dw      26
-passo_bola EQU 4
+passo_bola  resw 	1
+
 
 ; Posição da raquete esquerda
 x1_raquete_esquerda    dw 40     ; x1
