@@ -599,7 +599,7 @@ apaga_raquete_direita:
 
 atualiza_raquete_direita_cima:
 	CMP  WORD[y2_raquete_direita], 450
-	JG  continuacao_raquete
+	JG  near continuacao_raquete
 
 	CALL  apaga_raquete_direita
 	
@@ -611,7 +611,7 @@ atualiza_raquete_direita_cima:
 
 atualiza_raquete_direita_baixo:
 	CMP  WORD[y1_raquete_direita], 25
-	JL  continuacao_raquete
+	JL  near continuacao_raquete
 
 	CALL  apaga_raquete_direita
 	
@@ -619,12 +619,12 @@ atualiza_raquete_direita_baixo:
 	SUB  WORD[y2_raquete_direita], 5
 	SUB  WORD[y1_raquete_direita], 5
 	CALL desenha_raquete_direita
-	JMP continuacao_raquete
+	JMP near continuacao_raquete
 
 check_key_jogo:
 		MOV    AH, 01h
 		INT    16h
-		JZ     continuacao_raquete
+		JZ     near continuacao_raquete
 		MOV    AH, 00h
 		INT    16h
 		RET
@@ -642,7 +642,63 @@ handle_key_jogo:
 	CMP    AL, 71h
 	JE     sair
 
-	JMP    continuacao_raquete
+	CMP	   AL, 70h
+	JE 	   key_pause
+
+	JMP    near continuacao_raquete
+
+key_pause:
+		MOV 	CX,5						;número de caracteres
+    	MOV    	BX,0			
+    	MOV    	DH,15						;linha 0-29
+    	MOV     DL,35						;coluna 0-79
+		MOV		byte [cor],branco_intenso
+l_pause:
+		CALL	cursor
+		;MOV     DI,DS
+    	MOV     AL,[BX+pausado]
+		
+		CALL	caracter
+    	INC		BX							;proximo caracter
+		INC		DL							;avanca a coluna
+		; INC		byte[cor]				;mudar a cor para a seguinte
+    	LOOP    l_pause
+pausa:
+	CALL    check_key_pause
+	CMP     AL, 0
+	JE      pausa
+	JMP     handle_key_pause
+
+check_key_pause:
+		MOV    AH, 01h
+		INT    16h
+		JZ   near no_key
+		MOV    AH, 00h
+		INT    16h
+		RET
+
+handle_key_pause:
+	CMP	   AL, 70h
+	JE 	   resume
+	JMP    near pausa
+
+resume:
+		MOV 	CX,5						;número de caracteres
+    	MOV    	BX,0			
+    	MOV    	DH,15						;linha 0-29
+    	MOV     DL,35						;coluna 0-79
+		MOV		byte [cor],preto
+l_resume:
+		CALL	cursor
+		;MOV     DI,DS
+    	MOV     AL,[BX+pausado]
+		
+		CALL	caracter
+    	INC		BX							;proximo caracter
+		INC		DL							;avanca a coluna
+		; INC		byte[cor]				;mudar a cor para a seguinte
+    	LOOP    l_resume
+		JMP near continuacao_raquete
 
 
 sair:
@@ -952,7 +1008,7 @@ passo1:
 	MOV		AX, WORD[raio]
 	PUSH	AX
 	MOV     byte[cor], vermelho
-	CALL 	circle
+	CALL 	full_circle
 
 	; desenha as raquetes novamente por que a bola nova pode apagar elas
 	CALL    desenha_raquete_esquerda
@@ -984,6 +1040,42 @@ bateu_na_parede_superior:
 
 
 fim_jogo:
+	CMP 	WORD[bola_x], 10
+	JL		parar
+	CMP 	WORD[bola_x], 625
+	JG		parar
+
+;; apaga a bola
+	MOV 	AX, WORD[bola_x]
+	PUSH	AX
+	MOV		AX, WORD[bola_y]
+	PUSH	AX
+	MOV		AX, WORD[raio]
+	PUSH	AX
+	MOV     byte[cor], preto
+	CALL 	full_circle
+
+	;; atualiza a posição da bola
+	MOV 	AX, WORD[deltax]
+	ADD 	WORD[bola_x], AX
+
+	MOV 	AX, WORD[deltay]
+	ADD 	WORD[bola_y], AX
+
+
+	;; desenha a bola
+	MOV 	AX, WORD[bola_x]
+	PUSH	AX
+	MOV		AX, WORD[bola_y]
+	PUSH	AX
+	MOV		AX, WORD[raio]
+	PUSH	AX
+	MOV     byte[cor], vermelho
+	CALL 	full_circle
+
+	JMP fim_jogo
+
+parar:
 		MOV 	CX,17						;número de caracteres
     	MOV    	BX,0			
     	MOV    	DH,15						;linha 0-29
@@ -1061,6 +1153,7 @@ facil           db      'FACIL $'
 medio           db      'MEDIO $'
 dificil         db      'DIFICIL $'
 morreu          db      'morreu mane kkkk$'
+pausado         db      'PAUSE $'
 dificuldade     db      0
 raio            dw      16
 bola_x 		dw      320
