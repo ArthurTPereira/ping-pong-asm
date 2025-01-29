@@ -65,7 +65,7 @@ l_dificuldade:
 
 ;Desenvolvido por:
 
-		MOV 	CX,39						;número de caracteres
+		MOV 	CX,58						;número de caracteres
     	MOV    	BX,0			
     	MOV    	DH,29						;linha 0-29
     	MOV     DL,0						;coluna 0-79
@@ -330,7 +330,7 @@ reset_tela:
 	call	paint_cursor_3_NOT_selected
 
 	
-	MOV 	CX,39						;número de caracteres
+	MOV 	CX,58						;número de caracteres
     MOV    	BX,0			
     MOV    	DH,29						;linha 0-29
     MOV     DL,0						;coluna 0-79
@@ -703,6 +703,28 @@ l_resume:
 
 
 sair:
+		MOV 	CX,12						;número de caracteres
+    	MOV    	BX,0			
+    	MOV    	DH,10						;linha 0-29
+    	MOV     DL,30						;coluna 0-79
+		MOV		byte [cor],branco_intenso
+l_sair:
+		CALL	cursor
+		;MOV     DI,DS
+    	MOV     AL,[BX+deseja_sair]
+		
+		CALL	caracter
+    	INC		BX							;proximo caracter
+		INC		DL							;avanca a coluna
+		; INC		byte[cor]				;mudar a cor para a seguinte
+    	LOOP    l_sair
+
+	CALL 	desenha_menu_sim_nao
+
+	; TODO - fazer select para sair
+
+
+
 	MOV  	AH,0   						; set video mode
 	MOV  	AL,[modo_anterior]   		; modo anterior
 	INT  	10h
@@ -1332,7 +1354,7 @@ deltax		    dw		0
 deltay		    dw		0
 nome_jogo		dw 		'Ping-Pong $'
 selecao    	    db  	'Selecione a dificuldade $'
-desenvolvido	dw		'Desenvolvido por: esguicho, otoch, tvin $' 
+desenvolvido	dw		'Desenvolvido por: Arthur Pereira, Hugo Lima, Estevao Nunes $' 
 facil           db      'FACIL $'
 medio           db      'MEDIO $'
 dificil         db      'DIFICIL $'
@@ -1340,6 +1362,7 @@ sim				db      'SIM $'
 nao				db      'NAO $'
 pausado         db      'PAUSE $'
 jogar_novamente db      'Jogar novamente? $'
+deseja_sair     db	    'Deseja sair? $'
 dificuldade     db      0
 select_sim_nao  db		0
 raio            dw      16
