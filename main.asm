@@ -313,41 +313,15 @@ paint_cursor_3_NOT_selected:
 		RET
 
 reset_tela:
-    ; Carrega o segmento de vídeo para modo 12h (0xA000)
-    mov     ax, 0A000h
-    mov     es, ax
-    ; DI = 0 (início do segmento de vídeo)
-    xor     di, di
-    ; Precisamos escrever 76.800 words (cada word = 2 bytes = 4 pixels)
-    mov     cx, 76800
-    ; AX = 0 → cor preta em cada word
-    xor     ax, ax
-    ; Preenche (repete) CX vezes o valor de AX (0) em ES:[DI]
-    rep     stosw
+		MOV  	AH,0   						; set video mode
+	    MOV  	AL,[modo_anterior]   		; modo anterior
+	    INT  	10h
 
-	call 	paint_cursor_1_NOT_selected
-	call	paint_cursor_2_NOT_selected
-	call	paint_cursor_3_NOT_selected
+		MOV     AL,12h
+   		MOV     AH,0
+    	INT     10h
 
-	
-	MOV 	CX,58						;número de caracteres
-    MOV    	BX,0			
-    MOV    	DH,29						;linha 0-29
-    MOV     DL,0						;coluna 0-79
-	MOV		byte [cor],preto
-
-apaga_desenvolvido:
-	CALL	cursor
-		;MOV     DI,DS
-    MOV     AL,[BX+desenvolvido]
-		
-	CALL	caracter
-    INC		BX							;proximo caracter
-	INC		DL							;avanca a coluna
-
-    LOOP    apaga_desenvolvido
-
-    ret
+		RET
 
 cria_campo:
 ; Limites superiores e inferiores
@@ -1063,7 +1037,7 @@ bateu_na_parede_superior:
 
 
 fim_jogo:
-	CMP 	WORD[bola_x], 10
+	CMP 	WORD[bola_x], 15
 	JL		rejogar
 	CMP 	WORD[bola_x], 625
 	JG		rejogar
@@ -1085,6 +1059,10 @@ fim_jogo:
 	MOV 	AX, WORD[deltay]
 	ADD 	WORD[bola_y], AX
 
+	CMP 	WORD[bola_x], 15
+	JL		rejogar
+	CMP 	WORD[bola_x], 625
+	JG		rejogar
 
 	;; desenha a bola
 	MOV 	AX, WORD[bola_x]
