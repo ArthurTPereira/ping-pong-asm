@@ -2,7 +2,7 @@
 ; Uso de diretivas extern e global 
 ; Professor Camilo Diaz
 
-extern line, full_circle, circle, cursor, caracter, plot_xy, desenha_botoes, bloco
+extern line, full_circle, circle, cursor, caracter, plot_xy, desenha_botoes, bloco, desenha_botoes_sim_nao
 global cor
 
 segment code
@@ -24,7 +24,8 @@ segment code
     	MOV     AL,12h
    		MOV     AH,0
     	INT     10h
-		
+
+begin_game:
 ;Nome do jogo
 		MOV 	CX,9						;número de caracteres
     	MOV    	BX,0			
@@ -552,8 +553,8 @@ atualiza_raquete_esquerda_cima:
 	CALL  apaga_raquete_esquerda
 	
 	; Desenha nova raquete
-	ADD  WORD[y2_raquete_esquerda], 5
-	ADD  WORD[y1_raquete_esquerda], 5
+	ADD  WORD[y2_raquete_esquerda], passo_raquete
+	ADD  WORD[y1_raquete_esquerda], passo_raquete
 	CALL desenha_raquete_esquerda
 	JMP near continuacao_raquete
 
@@ -565,8 +566,8 @@ atualiza_raquete_esquerda_baixo:
 	CALL  apaga_raquete_esquerda
 	
 	; Desenha nova raquete
-	SUB  WORD[y2_raquete_esquerda], 5
-	SUB  WORD[y1_raquete_esquerda], 5
+	SUB  WORD[y2_raquete_esquerda], passo_raquete
+	SUB  WORD[y1_raquete_esquerda], passo_raquete
 	CALL desenha_raquete_esquerda
 	JMP near continuacao_raquete
 
@@ -1041,9 +1042,9 @@ bateu_na_parede_superior:
 
 fim_jogo:
 	CMP 	WORD[bola_x], 10
-	JL		parar
+	JL		rejogar
 	CMP 	WORD[bola_x], 625
-	JG		parar
+	JG		rejogar
 
 ;; apaga a bola
 	MOV 	AX, WORD[bola_x]
@@ -1075,32 +1076,215 @@ fim_jogo:
 
 	JMP fim_jogo
 
-parar:
-		MOV 	CX,17						;número de caracteres
+
+rejogar:
+		CALL  desenha_menu_sim_nao
+		CALL  l_jogar_novamente
+		JMP paint_yes_selected
+
+yes_no_loop:
+		CALL    check_key_yes_no
+		CMP     AL, 0
+		JE      yes_no_loop
+		JMP    handle_key_yes_no
+
+check_key_yes_no:
+		MOV    AH, 01h
+		INT    16h
+		JZ     no_key_yes_no
+		MOV    AH, 00h
+		INT    16h
+		RET
+
+
+no_key_yes_no:
+		MOV    AL, 0
+		RET
+
+handle_key_yes_no:
+		CMP    AL, 61h
+		JE     selection_left_yes_no
+		CMP    AL, 64h
+		JE     selection_right_yes_no
+
+		CMP    AL, 0Dh
+		JE    near selection_enter_yes_no
+		JMP     yes_no_loop
+
+selection_left_yes_no:
+		CMP    byte[select_sim_nao], 0
+		JE     yes_no_loop
+		
+		DEC    byte[select_sim_nao]
+		JMP   erase_cursor_yes_no
+
+selection_right_yes_no:
+		CMP    byte[select_sim_nao], 1
+		JE     yes_no_loop
+		
+		INC    byte[select_sim_nao]
+		JMP   erase_cursor_yes_no
+
+erase_cursor_yes_no:
+		CMP    byte[select_sim_nao], 0
+		JE     paint_yes_selected
+		CMP    byte[select_sim_nao], 1
+		JE     paint_no_selected
+
+		JMP    yes_no_loop
+
+paint_yes_selected:
+		MOV 	AX, 170
+		PUSH 	AX
+		MOV 	AX, 200
+		PUSH 	AX
+		MOV 	AX, 250
+		PUSH	AX
+		MOV 	AX, 200
+		PUSH 	AX
+		MOV 	byte[cor], verde_claro
+		CALL 	line
+
+MOV 	AX, 360
+		PUSH 	AX
+		MOV 	AX, 200
+		PUSH 	AX
+		MOV 	AX, 450
+		PUSH	AX
+		MOV 	AX, 200
+		PUSH 	AX
+		MOV 	byte[cor], preto
+		CALL 	line
+
+		JMP   	yes_no_loop
+
+
+paint_no_selected:
+
+		MOV 	AX, 360
+		PUSH 	AX
+		MOV 	AX, 200
+		PUSH 	AX
+		MOV 	AX, 450
+		PUSH	AX
+		MOV 	AX, 200
+		PUSH 	AX
+		MOV 	byte[cor], verde_claro
+		CALL 	line
+
+		MOV 	AX, 170
+		PUSH 	AX
+		MOV 	AX, 200
+		PUSH 	AX
+		MOV 	AX, 250
+		PUSH	AX
+		MOV 	AX, 200
+		PUSH 	AX
+		MOV 	byte[cor], preto
+		CALL 	line
+		JMP   	yes_no_loop
+
+selection_enter_yes_no:
+	CMP	byte[select_sim_nao], 0
+	JE 	recomecar
+	CMP	byte[select_sim_nao], 1
+	JE 	near sair
+
+recomecar:
+	MOV word[vermelho_esquerdo], 0
+	MOV word[amarelo_esquerdo], 0
+	MOV word[verde_esquerdo], 0
+	MOV word[azul_claro_esquerdo], 0
+	MOV word[azul_escuro_esquerdo], 0
+
+	MOV word[vermelho_direito], 0
+	MOV word[amarelo_direito], 0
+	MOV word[verde_direito], 0
+	MOV word[azul_claro_direito], 0
+	MOV word[azul_escuro_direito], 0
+
+	MOV word[x1_raquete_esquerda], 40
+	MOV word[y1_raquete_esquerda], 200
+	MOV word[x2_raquete_esquerda], 50
+	MOV word[y2_raquete_esquerda], 300
+
+	MOV word[x1_raquete_direita], 590
+	MOV word[y1_raquete_direita], 200
+	MOV word[x2_raquete_direita], 600
+	MOV word[y2_raquete_direita], 300
+
+	MOV word[bola_x], 320
+	MOV word[bola_y], 26
+	CALL	reset_tela
+	JMP 	near begin_game
+
+desenha_menu_sim_nao:
+	MOV byte[cor], branco_intenso
+	CALL l_sim
+	CALL l_nao
+	CALL desenha_botoes_sim_nao
+	RET
+
+apaga_menu_sim_nao:
+	MOV byte[cor], preto
+	CALL l_sim
+	CALL l_nao
+	CALL desenha_botoes_sim_nao
+	RET
+
+l_sim:
+		MOV 	CX,3						;número de caracteres
     	MOV    	BX,0			
     	MOV    	DH,15						;linha 0-29
-    	MOV     DL,30						;coluna 0-79
-		MOV		byte [cor],branco_intenso
-l_morreu:
+    	MOV     DL,25						;coluna 0-79
+
+loop_sim:
 		CALL	cursor
 		;MOV     DI,DS
-    	MOV     AL,[BX+morreu]
+    	MOV     AL,[BX+sim]
 		
 		CALL	caracter
     	INC		BX							;proximo caracter
 		INC		DL							;avanca a coluna
 		; INC		byte[cor]				;mudar a cor para a seguinte
-    	LOOP    l_morreu
+    	LOOP    loop_sim
+		RET
 
-rejogar:
-; por enquanto so esta saindo do jogo
-		MOV    AH, 01h
-		INT    16h
-		MOV    AH, 00h
-		INT    16h
-		CMP    AL, 71h
-		JE    near sair
-		JMP   rejogar
+l_nao:
+		MOV 	CX,3						;número de caracteres
+    	MOV    	BX,0			
+    	MOV    	DH,15						;linha 0-29
+    	MOV     DL,49						;coluna 0-79
+
+loop_nao:
+		CALL	cursor
+		;MOV     DI,DS
+    	MOV     AL,[BX+nao]
+		
+		CALL	caracter
+    	INC		BX							;proximo caracter
+		INC		DL							;avanca a coluna
+		; INC		byte[cor]				;mudar a cor para a seguinte
+    	LOOP    loop_nao
+		RET
+
+l_jogar_novamente:
+		MOV 	CX,16						;número de caracteres
+    	MOV    	BX,0			
+    	MOV    	DH,10						;linha 0-29
+    	MOV     DL,30						;coluna 0-79
+
+loop_novamente:
+		CALL	cursor
+		;MOV     DI,DS
+    	MOV     AL,[BX+jogar_novamente]
+		
+		CALL	caracter
+    	INC		BX							;proximo caracter
+		INC		DL							;avanca a coluna
+		; INC		byte[cor]				;mudar a cor para a seguinte
+    	LOOP    loop_novamente
+		RET
 
 segment data
 
@@ -1152,14 +1336,17 @@ desenvolvido	dw		'Desenvolvido por: esguicho, otoch, tvin $'
 facil           db      'FACIL $'
 medio           db      'MEDIO $'
 dificil         db      'DIFICIL $'
-morreu          db      'morreu mane kkkk$'
+sim				db      'SIM $'
+nao				db      'NAO $'
 pausado         db      'PAUSE $'
+jogar_novamente db      'Jogar novamente? $'
 dificuldade     db      0
+select_sim_nao  db		0
 raio            dw      16
 bola_x 		dw      320
 bola_y 		dw      26
 passo_bola  resw 	1
-
+passo_raquete equ 	5
 
 ; Posição da raquete esquerda
 x1_raquete_esquerda    dw 40     ; x1

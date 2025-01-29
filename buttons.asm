@@ -1,5 +1,5 @@
 
-global desenha_botoes
+global desenha_botoes, desenha_botoes_sim_nao
 extern line
 
 ; 1 botao
@@ -125,5 +125,96 @@ desenha_botoes:
 		MOV 	AX, 280
 		PUSH 	AX
 		CALL 	line
+
+		RET
+
+
+desenha_botoes_sim_nao:
+		MOV 	AX, 170
+		PUSH 	AX
+		MOV 	AX, 260
+		PUSH 	AX
+		MOV 	AX, 250
+		PUSH	AX
+		MOV 	AX, 260
+		PUSH 	AX
+		CALL 	line
+
+		MOV 	AX, 250
+		PUSH 	AX
+		MOV 	AX, 260
+		PUSH 	AX
+		MOV 	AX, 250
+		PUSH	AX
+		MOV 	AX, 210
+		PUSH 	AX
+		CALL 	line
+
+		MOV 	AX, 170
+		PUSH 	AX
+		MOV 	AX, 210
+		PUSH 	AX
+		MOV 	AX, 250
+		PUSH	AX
+		MOV 	AX, 210
+		PUSH 	AX
+		CALL 	line
+
+		
+		MOV 	AX, 170
+		PUSH 	AX
+		MOV 	AX, 210
+		PUSH 	AX
+		MOV 	AX, 170
+		PUSH	AX
+		MOV 	AX, 260
+		PUSH 	AX
+		CALL 	line
+
+
+
+; nao
+
+		MOV 	AX, 360
+		PUSH 	AX
+		MOV 	AX, 260
+		PUSH 	AX
+		MOV 	AX, 450
+		PUSH	AX
+		MOV 	AX, 260
+		PUSH 	AX
+		CALL 	line
+
+		MOV 	AX, 450
+		PUSH 	AX
+		MOV 	AX, 260
+		PUSH 	AX
+		MOV 	AX, 450
+		PUSH	AX
+		MOV 	AX, 210
+		PUSH 	AX
+		CALL 	line
+
+		MOV 	AX, 360
+		PUSH 	AX
+		MOV 	AX, 210
+		PUSH 	AX
+		MOV 	AX, 450
+		PUSH	AX
+		MOV 	AX, 210
+		PUSH 	AX
+		CALL 	line
+
+		
+		MOV 	AX, 360
+		PUSH 	AX
+		MOV 	AX, 210
+		PUSH 	AX
+		MOV 	AX, 360
+		PUSH	AX
+		MOV 	AX, 260
+		PUSH 	AX
+		CALL 	line
+
 
 		RET
