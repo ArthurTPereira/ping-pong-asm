@@ -695,10 +695,171 @@ l_sair:
 
 	CALL 	desenha_menu_sim_nao
 
-	; TODO - fazer select para sair
+		MOV 	AX, 170
+		PUSH 	AX
+		MOV 	AX, 200
+		PUSH 	AX
+		MOV 	AX, 250
+		PUSH	AX
+		MOV 	AX, 200
+		PUSH 	AX
+		MOV 	byte[cor], verde_claro
+		CALL 	line
+
+exit_loop:
+		CALL    check_key_exit_loop
+		CMP     AL, 0
+		JE     near exit_loop
+		JMP    handle_key_exit_loop
+
+check_key_exit_loop:
+		MOV    AH, 01h
+		INT    16h
+		JZ     no_key_exit_loop
+		MOV    AH, 00h
+		INT    16h
+		RET
 
 
+no_key_exit_loop:
+		MOV    AL, 0
+		RET
 
+handle_key_exit_loop:
+		CMP    AL, 61h
+		JE     selection_left_exit_loop
+		CMP    AL, 64h
+		JE     selection_right_exit_loop
+
+		CMP    AL, 0Dh
+		JE    near selection_enter_exit_loop
+		JMP     exit_loop
+
+selection_left_exit_loop:
+		CMP    byte[select_sair], 0
+		JE     exit_loop
+		
+		DEC    byte[select_sair]
+		JMP   erase_cursor_exit_loop
+
+selection_right_exit_loop:
+		CMP    byte[select_sair], 1
+		JE     exit_loop
+		
+		INC    byte[select_sair]
+		JMP   erase_cursor_exit_loop
+
+erase_cursor_exit_loop:
+		CMP    byte[select_sair], 0
+		JE     paint_yes_selected_exit_loop
+		CMP    byte[select_sair], 1
+		JE     paint_no_selected_exit_loop
+
+		JMP    exit_loop
+
+paint_yes_selected_exit_loop:
+		MOV 	AX, 170
+		PUSH 	AX
+		MOV 	AX, 200
+		PUSH 	AX
+		MOV 	AX, 250
+		PUSH	AX
+		MOV 	AX, 200
+		PUSH 	AX
+		MOV 	byte[cor], verde_claro
+		CALL 	line
+
+		MOV 	AX, 360
+		PUSH 	AX
+		MOV 	AX, 200
+		PUSH 	AX
+		MOV 	AX, 450
+		PUSH	AX
+		MOV 	AX, 200
+		PUSH 	AX
+		MOV 	byte[cor], preto
+		CALL 	line
+
+		JMP   	exit_loop
+
+
+paint_no_selected_exit_loop:
+
+		MOV 	AX, 360
+		PUSH 	AX
+		MOV 	AX, 200
+		PUSH 	AX
+		MOV 	AX, 450
+		PUSH	AX
+		MOV 	AX, 200
+		PUSH 	AX
+		MOV 	byte[cor], verde_claro
+		CALL 	line
+
+		MOV 	AX, 170
+		PUSH 	AX
+		MOV 	AX, 200
+		PUSH 	AX
+		MOV 	AX, 250
+		PUSH	AX
+		MOV 	AX, 200
+		PUSH 	AX
+		MOV 	byte[cor], preto
+		CALL 	line
+		JMP   	exit_loop
+
+selection_enter_exit_loop:
+	CMP	byte[select_sair], 0
+	JE 	near fechar_jogo
+	CMP	byte[select_sair], 1
+	JE  resumir_jogo
+
+
+resumir_jogo:
+	CALL	 apaga_menu_sim_nao
+	MOV 	byte[cor], preto
+
+	MOV 	AX, 360
+	PUSH 	AX
+	MOV 	AX, 200
+	PUSH 	AX
+	MOV 	AX, 450
+	PUSH	AX
+	MOV 	AX, 200
+	PUSH 	AX
+	CALL 	line
+
+	MOV 	AX, 170
+	PUSH 	AX
+	MOV 	AX, 200
+	PUSH 	AX
+	MOV 	AX, 250
+	PUSH	AX
+	MOV 	AX, 200
+	PUSH 	AX
+	CALL 	line
+
+	MOV 	CX,12						;número de caracteres
+	MOV    	BX,0			
+	MOV    	DH,10						;linha 0-29
+	MOV     DL,30						;coluna 0-79
+
+l_apaga_sair:
+	CALL	cursor
+	;MOV     DI,DS
+	MOV     AL,[BX+deseja_sair]
+	
+	CALL	caracter
+	INC		BX							;proximo caracter
+	INC		DL							;avanca a coluna
+	; INC		byte[cor]				;mudar a cor para a seguinte
+	LOOP    l_apaga_sair
+
+	MOV      byte[select_sair],0
+
+	JMP 	 near continuacao_raquete
+
+fechar_jogo:
 	MOV  	AH,0   						; set video mode
 	MOV  	AL,[modo_anterior]   		; modo anterior
 	INT  	10h
@@ -1188,7 +1349,7 @@ selection_enter_yes_no:
 	CMP	byte[select_sim_nao], 0
 	JE 	recomecar
 	CMP	byte[select_sim_nao], 1
-	JE 	near sair
+	JE 	near fechar_jogo
 
 recomecar:
 	MOV word[vermelho_esquerdo], 0
@@ -1215,6 +1376,10 @@ recomecar:
 
 	MOV word[bola_x], 320
 	MOV word[bola_y], 26
+
+	MOV byte[dificuldade], 0
+	MOV byte[select_sim_nao], 0
+
 	CALL	reset_tela
 	JMP 	near begin_game
 
@@ -1343,6 +1508,7 @@ jogar_novamente db      'Jogar novamente? $'
 deseja_sair     db	    'Deseja sair? $'
 dificuldade     db      0
 select_sim_nao  db		0
+select_sair    db		0
 raio            dw      16
 bola_x 		dw      320
 bola_y 		dw      26
